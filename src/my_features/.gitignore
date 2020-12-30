@@ -1,2 +1,4 @@
 train/*
+!train/.gitkeep
 test/*
+!test/.gitkeep

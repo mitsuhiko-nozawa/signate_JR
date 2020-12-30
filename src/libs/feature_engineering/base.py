@@ -20,7 +20,8 @@ class Feature(metaclass=ABCMeta):
         if "train" not in os.listdir(self.out_path): os.mkdir(self.out_train_path)
         if "test" not in os.listdir(self.out_path): os.mkdir(self.out_test_path)
         self.fname = self.name + ".feather"
-        #self.out_fname = osp.join(self.out_path, self.fname) # */src/my_features/feat.feather
+        self.seeds = param["seeds"]
+        self.nfolds = param["nfolds"]
 
     def run(self):
         # create and save feature as feather

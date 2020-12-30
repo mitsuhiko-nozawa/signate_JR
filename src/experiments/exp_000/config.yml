@@ -1,11 +1,11 @@
 exp_param: 
   WORK_DIR: None # */exp_000
   ROOT: None # */src
-  cv: date_cv_5fold_seed0
+  cv: date_cv
   nfolds: 5
-  seeds: [0]
+  seeds: [0, 1, 2, 3, 4]
   features: 
-    - date_cv_5fold_seed0
+    - date_cv
     - id
     - date
     - lineName
@@ -20,6 +20,7 @@ exp_param:
 
 
 prepro_param:
+  flag: False
   input_dir: input/
   output_dir: my_features/
   drop_features:
@@ -35,7 +36,7 @@ prepro_param:
   
 
 train_param: 
-  train_flag: False
+  flag: False
   model: LGBM_Model
   model_param: 
     max_depth: 6
