@@ -1,6 +1,7 @@
 from .base import BaseModel
 import lightgbm as lgb
 import pickle
+import numpy as np
 
 class LGBM_Model(BaseModel):
     def get_model(self):
@@ -18,9 +19,13 @@ class LGBM_Model(BaseModel):
         )
 
     def predict(self, X):
-        return self.model.predict(X)
+        preds = self.model.predict(X)
+        return np.where(preds < 0, 0, preds)
     
     def save_weight(self, path):
         pickle.dump(self.model, open(path, 'wb'))
+
+    def read_weight(self, fname):
+        self.model = pickle.load(open(fname, 'rb'))
 
 

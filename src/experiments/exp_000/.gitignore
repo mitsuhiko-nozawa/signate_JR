@@ -4,3 +4,4 @@ test/*
 weight/*
 val_preds/*
 outputs/*
+preds/*

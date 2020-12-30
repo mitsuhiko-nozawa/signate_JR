@@ -16,7 +16,7 @@ class Runner():
         self.exp_param = param["exp_param"]
         self.prepro_param = param["prepro_param"]
         self.train_param = param["train_param"]
-        self.pred_param = param["pred_param"]
+        self.pred_param = param["train_param"]
         self.log_param = param["log_param"]
         self.prepro_param.update(self.exp_param)
         self.train_param.update(self.exp_param)

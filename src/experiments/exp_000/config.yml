@@ -35,9 +35,7 @@ prepro_param:
   
 
 train_param: 
-
-
-
+  train_flag: False
   model: LGBM_Model
   model_param: 
     max_depth: 6
@@ -53,8 +51,6 @@ train_param:
     early_stopping_rounds: 40
     verbose_eval: 10
 
-pred_param:
-  param1: 1
   
 
 log_param:

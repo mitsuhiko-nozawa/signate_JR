@@ -3,6 +3,7 @@ import os
 import os.path as osp
 
 from Models.models import *
+from sklearn.metrics import mean_absolute_error
 
 class Learning():
     def __init__(self, param):
@@ -12,9 +13,11 @@ class Learning():
         self.val_pred_path = osp.join(self.WORK_DIR, "val_preds")
         self.weight_path = osp.join(self.WORK_DIR, "weight")
 
+        self.train_flag = param["train_flag"]
         self.cv = param["cv"]
         self.seeds = param["seeds"]
         self.nfolds = param["nfolds"]
+        self.y = param["y"]
 
         self.model = param["model"]
         self.model_param = param["model_param"] 
@@ -28,9 +31,26 @@ class Learning():
         
     
     def train_by_seed(self, seed):
+        if self.train_flag:
+            for fold in range(self.nfolds):
+                self.train_by_fold(seed, fold)
+
+        train_y = pd.read_feather(osp.join(self.ROOT, "my_features", "train", f"{self.y}.feather"))
+        oof_preds = pd.read_feather(osp.join(self.ROOT, "my_features", "train", f"{self.cv}.feather"))
+        print(f"data size : {oof_preds.shape}")
+        oof_preds["pred"] = 0
+        cnt = 0
+
         for fold in range(self.nfolds):
-            self.train_by_fold(seed, fold)
-        train_fold = pd.read_feather(osp.join(self.ROOT, "my_feature", "train", f"{self.cv}.feather"))
+            val_preds = pd.read_csv(osp.join(self.val_pred_path, f"preds_{seed}_{fold}.csv"))
+            oof_preds["pred"][oof_preds[self.cv] == fold] = val_preds["pred"].values
+            cnt += val_preds.shape[0]
+        print(f"valid sum : {cnt}")
+        print(oof_preds.isnull().sum())
+        oof_preds = oof_preds[["pred"]]
+        oof_preds.to_csv(osp.join(self.val_pred_path, f"oof_preds_{seed}.csv"), index=False)
+        cv_score = mean_absolute_error(train_y[self.y], oof_preds["pred"])
+        print(f"cv : {cv_score}")
 
     def train_by_fold(self, seed, fold):
         train_X = pd.read_csv(osp.join(self.WORK_DIR, "train", f"train_X_{fold}.csv"))
