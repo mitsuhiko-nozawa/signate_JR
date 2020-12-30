@@ -1,0 +1,10 @@
+exp_param:
+  param: 2
+prepro_param:
+  param1: 1
+train_param:
+  param1: 1
+pred_param:
+  param1: 1
+log_param:
+  param1: 1
