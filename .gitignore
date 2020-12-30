@@ -2,3 +2,4 @@ src/input/*
 !src/input/_decode.py
 !src/input/_setup.sh
 riiid-0ecf85ab5537.json
+.vscode
