@@ -1,42 +1,57 @@
 exp_param: 
   WORK_DIR: None # */exp_000
   ROOT: None # */src
-  cv: 
-    name: date
-    fold_num: 5
+  cv: date_cv_5fold_seed0
+  nfolds: 5
+  seeds: [0]
   features: 
-    - row_id
-    - timestamp
-    - user_id
-    - content_id
-    - content_type_id
-    - task_container_id
-    - user_answer
-    - answered_correctly
-    - prior_question_elapsed_time
-    - prior_question_had_explanation
-  features_in_cv:
-    - user_correctness
-    - content_correctness
+    - date_cv_5fold_seed0
+    - id
+    - date
+    - lineName
+    - directionCode
+    - trainNo
+    - stopStation
+    - planArrival
+    - delayTime
+    - continuedDelayTime
+    #- trainLength
+  y: delayTime
+
 
 prepro_param:
   input_dir: input/
-  feature_outdir: my_features/
+  output_dir: my_features/
   drop_features:
-    - row_id
-    - answered_correctly
+    - id
   label_encode:
-    - prior_question_had_explanation
+    - date
+    - lineName
+    - directionCode
+    - trainNo
+    - stopStation
+    - planArrival
 
   
 
 train_param: 
 
 
-  seeds: [0]
-  model: lgbm
-  model_param:
-    - lr: 0.05
+
+  model: LGBM_Model
+  model_param: 
+    max_depth: 6
+    n_estimators: 10000
+    colsample_bytree: 0.5
+    num_leaves: 12
+    learning_rate: 0.1
+    objective: mae
+    #saved_feature_importance_type : 1
+    verbose: -1
+    min_child_samples: 120
+    max_bin: 
+    early_stopping_rounds: 40
+    verbose_eval: 10
 
 pred_param:
   param1: 1
