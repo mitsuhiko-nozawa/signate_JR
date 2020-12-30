@@ -1,6 +1,0 @@
-exp_param:
-  param: 2
-  prepro_param: 1
-  train_param: 1
-  pred_param: 1
-  log_param: 1
