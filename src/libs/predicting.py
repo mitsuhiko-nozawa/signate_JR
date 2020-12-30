@@ -36,6 +36,11 @@ class Predicting():
         preds = np.mean(np.array(preds), axis=0)
         preds = pd.DataFrame(preds, columns=["pred"])
         preds.to_csv(osp.join(self.pred_path, "pred.csv"), index=False)
+        test_tgt = pd.read_csv(osp.join(self.ROOT, "input", "test.csv"), usecols=["id", "target"])
+        test_tgt["pred"] = preds["pred"].values
+        test_tgt = test_tgt[test_tgt["target"] == 1]
+        test_tgt = test_tgt[["id", "pred"]]
+        test_tgt.to_csv(osp.join(self.WORK_DIR, "submission.csv"), index=False, header=False)
 
 
     
