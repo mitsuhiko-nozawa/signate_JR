@@ -18,13 +18,18 @@ exp_param:
     #- trainLength
   y: delayTime
 
+  prepro_flag: False
+  train_flag: False
+  pred_flag: False
+  log_flag: True
+
 
 prepro_param:
-  flag: False
   input_dir: input/
   output_dir: my_features/
   drop_features:
     - id
+    - delayTime
   label_encode:
     - date
     - lineName
@@ -36,7 +41,6 @@ prepro_param:
   
 
 train_param: 
-  flag: False
   model: LGBM_Model
   model_param: 
     max_depth: 6
@@ -54,5 +58,3 @@ train_param:
 
   
 
-log_param:
-  param1: 1

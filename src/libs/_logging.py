@@ -1,7 +1,121 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+import os
+import os.path as osp
+from sklearn.metrics import mean_absolute_error
+import pickle
+
+import mlflow
+
 class Logging():
     def __init__(self, param):
         self.param = param
+        self.ROOT = param["exp_param"]["ROOT"]
+        self.WORK_DIR = param["exp_param"]["WORK_DIR"]
+        self.val_pred_path = osp.join(self.WORK_DIR, "val_preds")
+        self.weight_path = osp.join(self.WORK_DIR, "weight")
+
+        self.feats = param["exp_param"]["features"].copy()
+        self.model_param = param["train_param"]["model_param"]
+        self.cv_score = None
+        self.cv_scores = None
+        self.feature_importances_fname = None
+
+        self.seeds = param["exp_param"]["seeds"]
+        self.nfolds = param["exp_param"]["nfolds"]
+        self.y = param["exp_param"]["y"]
+        self.cv = param["exp_param"]["cv"]
+        self.flag = param["exp_param"]["log_flag"]
+        for feat in param["prepro_param"]["drop_features"] + [self.cv]:
+            if feat in self.feats: self.feats.remove(feat)
 
     def __call__(self):
-        pass
+        print("Logging")
+        if self.flag:
+            # cvの計算, seedごと、平均
+            # 使った特徴量
+            # feature_importanceの計算、描画
+            # モデルのパラメータ
+            # 結果の解釈
+            # をmlflowにあげる
+            self.cv_score, self.cv_scores = self.calc_cv()
+            self.create_feature_importances()
+
+            mlflow.set_tracking_uri(osp.join(self.WORK_DIR, "mlruns"))
+            self.create_mlflow()
+        
+        
+
+    def calc_cv(self):
+        preds = []
+        cv_scores = []
+        train_y = pd.read_feather(osp.join(self.ROOT, "my_features", "train", f"{self.y}.feather"))
+        for seed in self.seeds:
+            cv_feat = f"{self.cv}_{seed}"
+            oof_preds = pd.read_feather(osp.join(self.ROOT, "my_features", "train", f"{self.cv}.feather"))
+            oof_preds["pred"] = 0
+
+            for fold in range(self.nfolds):
+                val_preds = pd.read_csv(osp.join(self.val_pred_path, f"preds_{seed}_{fold}.csv"))
+                oof_preds["pred"][oof_preds[cv_feat] == fold] = val_preds["pred"].values
+            oof_preds = oof_preds[["pred"]]
+            oof_preds.to_csv(osp.join(self.val_pred_path, f"oof_preds_{seed}.csv"), index=False)
+            cv_score = mean_absolute_error(train_y[self.y], oof_preds["pred"])
+            cv_scores.append(cv_score)
+            print(f"seed {seed}, cv : {cv_score}")
+            preds.append(oof_preds["pred"].values)
+        preds = np.mean(np.array(preds), axis=0)
+        preds = pd.DataFrame(preds, columns=["pred"])
+        preds.to_csv(osp.join(self.val_pred_path, "oof_preds.csv"), index=False)
+        cv_score = mean_absolute_error(train_y[self.y], preds["pred"])
+        print(f"final cv : {cv_score}")
+        return cv_score, cv_scores
+
+        
+    def create_feature_importances(self):
+        models = []
+        for seed in [0, 1, 2, 3, 4]:
+            for fold in range(5):
+                p = osp.join(self.weight_path, f"{seed}_{fold}.pkl")
+                models.append(pickle.load(open(p, 'rb')))
+        self.feature_importances_fname = osp.join(self.WORK_DIR, "feature_importances.png")
+        self.visualize_importance(models, self.feats, self.feature_importances_fname)
+
+    def visualize_importance(self, models, feats, save_fname):
+        feature_importance_df = pd.DataFrame()
+        for i, model in enumerate(models):
+            _df = pd.DataFrame()
+            _df['feature_importance'] = model.feature_importance()
+            _df['column'] = feats
+            _df['fold'] = i + 1
+            feature_importance_df = pd.concat([feature_importance_df, _df], axis=0, ignore_index=True)
+
+        order = feature_importance_df.groupby('column')\
+            .sum()[['feature_importance']]\
+            .sort_values('feature_importance', ascending=False).index
+
+        fig, ax = plt.subplots(figsize=(max(6, len(order) * .4), 7))
+        sns.boxenplot(data=feature_importance_df, x='column', y='feature_importance', order=order, ax=ax, palette='viridis')
+        ax.tick_params(axis='x', rotation=90)
+        ax.grid()
+        fig.tight_layout()
+        plt.savefig(save_fname)
+        return fig, ax
     
+    def create_mlflow(self):
+        with mlflow.start_run():
+            mlflow.log_param("model_param", self.model_param)
+            mlflow.log_param("features", self.feats)
+            mlflow.log_param("seeds", self.seeds)
+            mlflow.log_param("nfolds", self.nfolds)
+            mlflow.log_param("cv_type", self.cv)
+            mlflow.log_param("cv_scores", self.cv_scores)
+
+            # Log a metric; metrics can be updated throughout the run
+            mlflow.log_metric("cv_score", self.cv_score)
+            #log_metric("cv_scores", self.cv_scores)
+
+            # Log an artifact (output file)
+            mlflow.log_artifact(self.feature_importances_fname)

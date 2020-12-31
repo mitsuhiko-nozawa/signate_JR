@@ -6,3 +6,6 @@ val_preds/*
 outputs/*
 preds/*
 submission.csv
+mlruns/*
+feature_importances.png
+log.txt

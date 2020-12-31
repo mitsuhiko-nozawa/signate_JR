@@ -16,7 +16,7 @@ class Preprocessing():
         self.drop_feats = param["drop_features"]
         self.label_encode = param["label_encode"]
         self.y = param["y"]
-        self.prepro_flag = param["flag"]
+        self.flag = param["prepro_flag"]
         
         self.ROOT = param["ROOT"] # */src
         self.WORK_DIR = param["WORK_DIR"]
@@ -29,7 +29,8 @@ class Preprocessing():
         if "test" not in os.listdir(self.WORK_DIR): os.mkdir(osp.join(self.WORK_DIR, "test")) 
 
     def __call__(self):
-        if self.prepro_flag: # まだ作ってないなら
+        print("Preprocessing")
+        if self.flag: 
             feat_classes = [eval(feat)(self.param) for feat in self.feats]
             for f_class in feat_classes:
                 f_class.run()
@@ -42,9 +43,10 @@ class Preprocessing():
                 train_df[feat] = lbl_enc.transform(train_df[feat])
                 test_df[feat] = lbl_enc.transform(test_df[feat])
 
-            print("drop cols")
-            train_df.drop(columns=self.drop_feats, inplace=True)
-            test_df.drop(columns=self.drop_feats, inplace=True)
+            #print("drop cols")
+            #for feat in self.drop_feats:
+            #    if feat in train_df.columns: train_df.drop(columns=[feat], inplace=True)
+            #    if feat in test_df.columns: test_df.drop(columns=[feat], inplace=True)
 
             print("save data")
             cv_feats = [f"{self.cv}_{seed}" for seed in self.seeds]
@@ -52,8 +54,8 @@ class Preprocessing():
                 for fold in range(self.nfolds):
                     train = train_df[~(train_df[cv_feat] == fold)]
                     valid = train_df[train_df[cv_feat] == fold]
-                    train_X = train.drop(columns=[self.y]+cv_feats)
-                    valid_X = valid.drop(columns=[self.y]+cv_feats)
+                    train_X = train.drop(columns=self.drop_feats+cv_feats)
+                    valid_X = valid.drop(columns=self.drop_feats+cv_feats)
                     train_y = train[[self.y]]
                     valid_y = valid[[self.y]]
                     train_X.to_csv(osp.join(self.WORK_DIR, "train", f"train_X_{seed}_{fold}.csv"), index=False)
@@ -61,7 +63,7 @@ class Preprocessing():
                     valid_X.to_csv(osp.join(self.WORK_DIR, "valid", f"valid_X_{seed}_{fold}.csv"), index=False)
                     valid_y.to_csv(osp.join(self.WORK_DIR, "valid", f"valid_y_{seed}_{fold}.csv"), index=False)
             
-            test_X = test_df.drop(columns=[self.y])
+            test_X = test_df.drop(columns=self.drop_feats)
             test_X.to_csv(osp.join(self.WORK_DIR, "test", f"test_X.csv"), index=False)
 
 

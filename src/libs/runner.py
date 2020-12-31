@@ -17,10 +17,9 @@ class Runner():
         self.prepro_param = param["prepro_param"]
         self.train_param = param["train_param"]
         self.pred_param = param["train_param"]
-        self.log_param = param["log_param"]
+        self.log_param = param
         self.prepro_param.update(self.exp_param)
         self.train_param.update(self.exp_param)
-        self.log_param.update(self.exp_param)
 
     def __call__(self):
         Preprocessor = Preprocessing(self.prepro_param)
