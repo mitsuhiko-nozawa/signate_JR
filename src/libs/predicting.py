@@ -35,6 +35,8 @@ class Predicting():
                     weight_fname = osp.join(self.weight_path, f"{seed}_{fold}.pkl")
                     model.read_weight(weight_fname)
                     pred = model.predict(test_X)
+                    pred_ = pd.DataFrame(pred, columns=["pred"])
+                    pred_.to_csv(osp.join(self.pred_path, f"pred_{seed}_{fold}.csv"), index=False)
                     preds.append(pred)
             preds = np.mean(np.array(preds), axis=0)
             preds = pd.DataFrame(preds, columns=["pred"])

@@ -58,11 +58,14 @@ class continuedDelayTime(Feature):
 
         train_df.loc[train_index_am, "delayTime"] = np.nan
         train_df.loc[train_index_pm, "delayTime"] = np.nan 
+        train_df["isnanDelayTime"] = train_df["delayTime"].map(lambda x : 1 if x != x else 0)
+        test_df["isnanDelayTime"] = test_df["delayTime"].map(lambda x : 1 if x != x else 0)
+        print(train_df["isnanDelayTime"].sum())
 
         train_df[self.name] = train_df.groupby(["date", "trainNo"])["delayTime"].transform(lambda x: x.fillna(method="ffill").fillna(0))
         test_df[self.name] = test_df.groupby(["date", "trainNo"])["delayTime"].transform(lambda x: x.fillna(method="ffill").fillna(0))       
 
-        return train_df[[self.name]], test_df[[self.name]]
+        return train_df[[self.name, "isnanDelayTime"]], test_df[[self.name, "isnanDelayTime"]]
 
 
 class date_cv(Feature):

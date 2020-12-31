@@ -18,3 +18,4 @@ touch run.sh
 touch main.py
 touch config.yml
 touch description.txt
+touch .gitignore

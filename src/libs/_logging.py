@@ -4,10 +4,12 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import os
 import os.path as osp
+import glob
 from sklearn.metrics import mean_absolute_error
 import pickle
 
 import mlflow
+from google.cloud import storage
 
 class Logging():
     def __init__(self, param):
@@ -17,7 +19,7 @@ class Logging():
         self.val_pred_path = osp.join(self.WORK_DIR, "val_preds")
         self.weight_path = osp.join(self.WORK_DIR, "weight")
 
-        self.feats = param["exp_param"]["features"].copy()
+        self.feats = None
         self.model_param = param["train_param"]["model_param"]
         self.cv_score = None
         self.cv_scores = None
@@ -28,8 +30,7 @@ class Logging():
         self.y = param["exp_param"]["y"]
         self.cv = param["exp_param"]["cv"]
         self.flag = param["exp_param"]["log_flag"]
-        for feat in param["prepro_param"]["drop_features"] + [self.cv]:
-            if feat in self.feats: self.feats.remove(feat)
+        self.exp_name = param["exp_param"]["exp_name"]
 
     def __call__(self):
         print("Logging")
@@ -40,11 +41,13 @@ class Logging():
             # モデルのパラメータ
             # 結果の解釈
             # をmlflowにあげる
+            self.feats = pickle.load(open(osp.join(self.WORK_DIR, "features.pkl"), 'rb'))
             self.cv_score, self.cv_scores = self.calc_cv()
             self.create_feature_importances()
 
             mlflow.set_tracking_uri(osp.join(self.WORK_DIR, "mlruns"))
             self.create_mlflow()
+            self.upload_gcs()
         
         
 
@@ -113,9 +116,29 @@ class Logging():
             mlflow.log_param("cv_type", self.cv)
             mlflow.log_param("cv_scores", self.cv_scores)
 
-            # Log a metric; metrics can be updated throughout the run
             mlflow.log_metric("cv_score", self.cv_score)
             #log_metric("cv_scores", self.cv_scores)
 
-            # Log an artifact (output file)
             mlflow.log_artifact(self.feature_importances_fname)
+
+    def upload_gcs(self):
+        PROJECT_ID = 'signateJR2020'
+        BUCKET_NAME = 'signate-jr2020'
+
+        os.environ["GCLOUD_PROJECT"] = PROJECT_ID
+        os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = osp.join(self.ROOT, "signateJR2020-d11d5341dabe.json")
+        storage_client = storage.Client(project=PROJECT_ID)
+        
+        blobs = storage_client.list_blobs(BUCKET_NAME) # storageのディレクトリ
+
+        files = [f for f in glob.glob(osp.join(self.WORK_DIR, "mlruns", "**"), recursive=True)]
+        files_in_bucket = [f.name for f in storage_client.list_blobs(BUCKET_NAME)]
+        bucket = storage_client.get_bucket(BUCKET_NAME)
+        for f in files:
+            try:
+                if f not in files_in_bucket:
+                    print(f.replace(self.WORK_DIR+"/", ""))
+                    blob = bucket.blob(f.replace(self.WORK_DIR+"/", ""))
+                    blob.upload_from_filename(f)
+            except:
+                pass

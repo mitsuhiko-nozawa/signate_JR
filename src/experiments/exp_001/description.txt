@@ -1,0 +1,3 @@
+exp000から特徴量
+・isnanDelayTime
+を削除

@@ -2,6 +2,7 @@ from feature_engineering.features import *
 import os
 import os.path as osp
 from sklearn.preprocessing import LabelEncoder
+import pickle
 
 class Preprocessing():
     def __init__(self, param):
@@ -50,12 +51,17 @@ class Preprocessing():
 
             print("save data")
             cv_feats = [f"{self.cv}_{seed}" for seed in self.seeds]
+            use_cols = train_df.columns.to_list()
+            for feat in self.drop_feats+cv_feats:
+                if feat in use_cols: use_cols.remove(feat)
+            pickle.dump(use_cols, open(osp.join(self.WORK_DIR, "features.pkl"), "wb"))
+
             for seed, cv_feat in zip(self.seeds, cv_feats):
                 for fold in range(self.nfolds):
                     train = train_df[~(train_df[cv_feat] == fold)]
                     valid = train_df[train_df[cv_feat] == fold]
-                    train_X = train.drop(columns=self.drop_feats+cv_feats)
-                    valid_X = valid.drop(columns=self.drop_feats+cv_feats)
+                    train_X = train[use_cols]
+                    valid_X = valid[use_cols]
                     train_y = train[[self.y]]
                     valid_y = valid[[self.y]]
                     train_X.to_csv(osp.join(self.WORK_DIR, "train", f"train_X_{seed}_{fold}.csv"), index=False)
@@ -63,7 +69,7 @@ class Preprocessing():
                     valid_X.to_csv(osp.join(self.WORK_DIR, "valid", f"valid_X_{seed}_{fold}.csv"), index=False)
                     valid_y.to_csv(osp.join(self.WORK_DIR, "valid", f"valid_y_{seed}_{fold}.csv"), index=False)
             
-            test_X = test_df.drop(columns=self.drop_feats)
+            test_X = test_df[use_cols]
             test_X.to_csv(osp.join(self.WORK_DIR, "test", f"test_X.csv"), index=False)
 
 

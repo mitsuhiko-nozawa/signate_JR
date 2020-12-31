@@ -51,7 +51,7 @@ class Learning():
         model = eval(self.model)(self.model_param)
         model.fit(train_X, train_y, valid_X, valid_y)
 
-        val_pred = pd.DataFrame(model.predict(valid_y), columns=["pred"])
+        val_pred = pd.DataFrame(model.predict(valid_X), columns=["pred"])
         val_pred.to_csv(osp.join(self.val_pred_path, f"preds_{seed}_{fold}.csv"), index=False)
 
         model.save_weight(osp.join(self.weight_path, f"{seed}_{fold}.pkl"))
