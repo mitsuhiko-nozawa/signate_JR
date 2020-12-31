@@ -118,3 +118,9 @@ class date_cv(Feature):
 
         return train_df[use_cols], None
 
+class date_TrainNo_count(Feature):
+    def create_features(self):
+        train_df, test_df = self.read_input()
+        train_df[self.name] = train_df.groupby(["date", "trainNo"])["id"].transform("count")
+        test_df[self.name] = test_df.groupby(["date", "trainNo"])["id"].transform("count")
+        return train_df[[self.name]], test_df[[self.name]]
