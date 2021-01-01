@@ -4,6 +4,8 @@ import time
 import sys
 import math
 from contextlib import contextmanager
+import random
+import numpy as np
 
 @contextmanager
 def trace(title):
@@ -24,3 +26,8 @@ def timer(name):
     yield
     print(f'[{name}] done in {time.time() - t0:.0f} s')
 
+
+def seed_everything(seed=42):
+    random.seed(seed)
+    os.environ['PYTHONHASHSEED'] = str(seed)
+    np.random.seed(seed)

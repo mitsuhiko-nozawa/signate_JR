@@ -4,6 +4,7 @@ import os.path as osp
 
 from Models.models import *
 from sklearn.metrics import mean_absolute_error
+from utils import seed_everything
 
 class Learning():
     def __init__(self, param):
@@ -28,6 +29,7 @@ class Learning():
     def __call__(self):
         print("Training")
         for seed in self.seeds:
+            seed_everything(seed)
             self.train_by_seed(seed)
         
     
