@@ -110,6 +110,7 @@ class Logging():
     
     def create_mlflow(self):
         with mlflow.start_run():
+            mlflow.log_param("exp_name", self.exp_name)
             mlflow.log_param("model_param", self.model_param)
             mlflow.log_param("features", self.feats)
             mlflow.log_param("seeds", self.seeds)

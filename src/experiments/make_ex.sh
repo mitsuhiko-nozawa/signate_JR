@@ -1,13 +1,13 @@
 dnum=$(ls -l | wc -l)
-dnum=$(($fnum - 3))
-dnum=${fnum//[[:blank:]]}
-dsize=${#fnum}
+dnum=$(($dnum - 3))
+dnum=${dnum//[[:blank:]]}
+dsize=${#dnum}
 
-if [ $fsize = 1 ]; then
-    dnum=00$fnum
-elif [ $fsize = 2 ]; then
-    dnum=0$fnum
+if [ $dsize = 1 ]; then
+    dnum=00$dnum
+elif [ $dsize = 2 ]; then
+    dnum=0$dnum
 fi
 
-dname=exp_$fnum
+dname=exp_$dnum
 cp -r _template ${dname}

@@ -124,3 +124,19 @@ class date_TrainNo_count(Feature):
         train_df[self.name] = train_df.groupby(["date", "trainNo"])["id"].transform("count")
         test_df[self.name] = test_df.groupby(["date", "trainNo"])["id"].transform("count")
         return train_df[[self.name]], test_df[[self.name]]
+
+class desc_continuedDelayTime(Feature):
+    def create_features(self):
+        train_df, test_df = self.read_input()
+        cDT_tr = pd.read_feather(osp.join(self.ROOT, "my_features", "train", "continuedDelayTime.feather"))
+        cDT_te = pd.read_feather(osp.join(self.ROOT, "my_features", "test", "continuedDelayTime.feather"))
+        train_df = pd.concat([train_df, cDT_tr], axis=1)
+        test_df = pd.concat([test_df, cDT_te], axis=1)
+        aggs = ["mean", "median", "max", "min", "var"]
+        feats = []
+        for agg in aggs:
+            feat_name = f"{agg}_continuedDelayTime"
+            feats.append(feat_name)
+            train_df[feat_name] = train_df.groupby(["date", "trainNo"])["continuedDelayTime"].transform(agg)
+            test_df[feat_name] = test_df.groupby(["date", "trainNo"])["continuedDelayTime"].transform(agg)
+        return train_df[feats], test_df[feats]
