@@ -24,6 +24,7 @@ class Logging():
         self.cv_score = None
         self.cv_scores = None
         self.feature_importances_fname = None
+        self.submission_fname = osp.join(self.WORK_DIR, "submission.csv")
 
         self.seeds = param["exp_param"]["seeds"]
         self.nfolds = param["exp_param"]["nfolds"]
@@ -120,6 +121,7 @@ class Logging():
             #log_metric("cv_scores", self.cv_scores)
 
             mlflow.log_artifact(self.feature_importances_fname)
+            mlflow.log_artifact(self.submission_fname)
 
     def upload_gcs(self):
         PROJECT_ID = 'signateJR2020'
