@@ -56,12 +56,26 @@ class Feature(metaclass=ABCMeta):
         test_feat = pd.read_csv(osp.join(self.input_path, "test.csv"), usecols=[self.name], dtype=dtypes)
         return train_feat, test_feat
 
+    def testMix_create_default_features(self, dtypes):
+        name = self.name.replace("testMix_", "")
+        train_df, test_df = self.testMix_read_input()
+        train_df = train_df[[name]]
+        test_df = test_df[[name]]
+        return train_df, test_df
+
     def read_input(self):
         train_df = pd.read_csv(osp.join(self.input_path, "train.csv"))
         test_df = pd.read_csv(osp.join(self.input_path, "test.csv"))
         return train_df, test_df
 
-
+    def testMix_read_input(self):
+        train_df = pd.read_csv(osp.join(self.input_path, "train.csv"))
+        test_df = pd.read_csv(osp.join(self.input_path, "test.csv"))
+        test_g = test_df.groupby(["date", "trainNo"])[["id", "delayTime"]].count()
+        test_g = test_g[test_g["id"] == test_g["delayTime"]].reset_index()
+        test_Mix = test_df[(test_df["date"].isin(test_g["date"].values)) & (test_df["trainNo"].isin(test_g["trainNo"].values))]
+        train_df = train_df.append(test_Mix).drop(columns=["target"]).reset_index(drop=True)       
+        return train_df, test_df
 
     def read_feats(self, feats):
         df = [pd.read_feather( osp.join(self.out_path, f"{feat}.feather") ) for feat in feats]

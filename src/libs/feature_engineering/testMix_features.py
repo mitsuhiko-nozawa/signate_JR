@@ -5,42 +5,42 @@ from .base import Feature
 
 from sklearn.model_selection import KFold
 
-class id(Feature):
+class testMix_id(Feature):
     def create_features(self):
-        return self.create_default_features(dtypes={self.name : "int64"})
+        return self.testMix_create_default_features(dtypes={self.name : "int64"})
 
-class date(Feature):
+class testMix_date(Feature):
     def create_features(self):
-        return self.create_default_features(dtypes={self.name : "int64"})
+        return self.testMix_create_default_features(dtypes={self.name : "int64"})
 
-class lineName(Feature):
+class testMix_lineName(Feature):
     def create_features(self):
-        return self.create_default_features(dtypes={self.name : "object"})
+        return self.testMix_create_default_features(dtypes={self.name : "object"})
 
-class directionCode(Feature):
+class testMix_directionCode(Feature):
     def create_features(self):
-        return self.create_default_features(dtypes={self.name : "int64"})
+        return self.testMix_create_default_features(dtypes={self.name : "int64"})
 
-class trainNo(Feature):
+class testMix_trainNo(Feature):
     def create_features(self):
-        return self.create_default_features(dtypes={self.name : "object"})
+        return self.testMix_create_default_features(dtypes={self.name : "object"})
 
-class stopStation(Feature):
+class testMix_stopStation(Feature):
     def create_features(self):
-        return self.create_default_features(dtypes={self.name : "object"})
+        return self.testMix_create_default_features(dtypes={self.name : "object"})
 
-class planArrival(Feature):
+class testMix_planArrival(Feature):
     def create_features(self):
-        return self.create_default_features(dtypes={self.name : "object"})
+        return self.testMix_create_default_features(dtypes={self.name : "object"})
 
-class delayTime(Feature):
+class testMix_delayTime(Feature):
     def create_features(self):
-        return self.create_default_features(dtypes={self.name : "int64"})
+        return self.testMix_create_default_features(dtypes={self.name : "int64"})
 
 
-class continuedDelayTime(Feature):
+class testMix_continuedDelayTime(Feature):
     def create_features(self):
-        train_df, test_df = self.read_input()
+        train_df, test_df = self.testMix_read_input()
         train_df["planArrivalNumeric"] = train_df["planArrival"].map(lambda x : int(x.replace(":", "")))
 
         train_index_am = train_df.query("901 <= planArrivalNumeric <= 1200").index
@@ -68,12 +68,12 @@ class continuedDelayTime(Feature):
         return train_df[[self.name, "isnanDelayTime"]], test_df[[self.name, "isnanDelayTime"]]
 
 
-class date_cv(Feature):
+class testMix_date_cv(Feature):
     def create_features(self):
         # test_featsはNoneで返す
         # trainにしかないdateはランダムに5分割
         # trainにもtestにもあるdateは、その日付内でtrainNoで5分割
-        train_df, test_df = self.read_input()
+        train_df, test_df = self.testMix_read_input()
         use_cols = []
         for seed in self.seeds:
             feat_name = f"{self.name}_{seed}"
@@ -113,21 +113,21 @@ class date_cv(Feature):
                     val_trainNo = trainNo_df.iloc[val_ind].index.to_list()
                     train_index = train_df[(train_df["date"] == date)&(train_df["trainNo"].isin(val_trainNo))].index
                     if train_df.loc[train_index][feat_name].nunique() != 1:
-                        raise ValueError("error!")
+                        raise ValueError(f"Value error, feature {feat_name} has {train_df.loc[train_index][feat_name].nunique()} unique values.")
                     train_df.loc[train_index, feat_name] = fold
 
         return train_df[use_cols], None
 
-class date_TrainNo_count(Feature):
+class testMix_date_TrainNo_count(Feature):
     def create_features(self):
-        train_df, test_df = self.read_input()
+        train_df, test_df = self.testMix_read_input()
         train_df[self.name] = train_df.groupby(["date", "trainNo"])["id"].transform("count")
         test_df[self.name] = test_df.groupby(["date", "trainNo"])["id"].transform("count")
         return train_df[[self.name]], test_df[[self.name]]
 
-class desc_continuedDelayTime(Feature):
+class testMix_desc_continuedDelayTime(Feature):
     def create_features(self):
-        train_df, test_df = self.read_input()
+        train_df, test_df = self.testMix_read_input()
         cDT_tr = pd.read_feather(osp.join(self.ROOT, "my_features", "train", "continuedDelayTime.feather"))
         cDT_te = pd.read_feather(osp.join(self.ROOT, "my_features", "test", "continuedDelayTime.feather"))
         train_df = pd.concat([train_df, cDT_tr], axis=1)

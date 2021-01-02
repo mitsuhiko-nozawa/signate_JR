@@ -1,23 +1,22 @@
 exp_param: 
   WORK_DIR: None # */exp_000
   ROOT: None # */src
-  cv: date_cv
+  cv: testMix_date_cv
   nfolds: 5
   seeds: [0, 1, 2, 3, 4]
   exp_name: template
   features: 
-    - date_cv
-    - id
-    - date
-    - lineName
-    - directionCode
-    - trainNo
-    - stopStation
-    - planArrival
-    - delayTime
-    - continuedDelayTime
-    - 
-  y: delayTime
+    - testMix_date_cv
+    - testMix_id
+    - testMix_date
+    - testMix_lineName
+    - testMix_directionCode
+    - testMix_trainNo
+    - testMix_stopStation
+    - testMix_planArrival
+    - testMix_delayTime
+    - testMix_continuedDelayTime
+  y: testMix_delayTime
 
   prepro_flag: True
   train_flag: True
@@ -29,16 +28,16 @@ prepro_param:
   input_dir: input/
   output_dir: my_features/
   drop_features:
-    - id
-    - delayTime
-    - isnanDelayTime
+    - testMix_id
+    - testMix_delayTime
+    - testMix_isnanDelayTime
   label_encode:
-    - date
-    - lineName
-    - directionCode
-    - trainNo
-    - stopStation
-    - planArrival
+    - testMix_date
+    - testMix_lineName
+    - testMix_directionCode
+    - testMix_trainNo
+    - testMix_stopStation
+    - testMix_planArrival
 
   
 
