@@ -66,14 +66,14 @@ class Logging():
                 oof_preds["pred"][oof_preds[cv_feat] == fold] = val_preds["pred"].values
             oof_preds = oof_preds[["pred"]]
             oof_preds.to_csv(osp.join(self.val_pred_path, f"oof_preds_{seed}.csv"), index=False)
-            cv_score = mean_absolute_error(train_y[self.y.replace("testMix_", "")], oof_preds["pred"])
+            cv_score = mean_absolute_error(train_y[self.y.replace("testMix_", "")][:1488885], oof_preds["pred"][:1488885])
             cv_scores.append(cv_score)
             print(f"seed {seed}, cv : {cv_score}")
             preds.append(oof_preds["pred"].values)
         preds = np.mean(np.array(preds), axis=0)
         preds = pd.DataFrame(preds, columns=["pred"])
         preds.to_csv(osp.join(self.val_pred_path, "oof_preds.csv"), index=False)
-        cv_score = mean_absolute_error(train_y[self.y.replace("testMix_", "")], preds["pred"])
+        cv_score = mean_absolute_error(train_y[self.y.replace("testMix_", "")][:1488885], preds["pred"][:1488885])
         print(f"final cv : {cv_score}")
         return cv_score, cv_scores
 
