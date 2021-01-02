@@ -16,7 +16,7 @@ exp_param:
     - testMix_planArrival
     - testMix_delayTime
     - testMix_continuedDelayTime
-  y: testMix_delayTime
+  y: delayTime
 
   prepro_flag: True
   train_flag: True
@@ -28,16 +28,16 @@ prepro_param:
   input_dir: input/
   output_dir: my_features/
   drop_features:
-    - testMix_id
-    - testMix_delayTime
-    - testMix_isnanDelayTime
+    - id
+    - delayTime
+    - isnanDelayTime
   label_encode:
-    - testMix_date
-    - testMix_lineName
-    - testMix_directionCode
-    - testMix_trainNo
-    - testMix_stopStation
-    - testMix_planArrival
+    - date
+    - lineName
+    - directionCode
+    - trainNo
+    - stopStation
+    - planArrival
 
   
 
