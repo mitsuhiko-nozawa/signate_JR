@@ -57,9 +57,10 @@ class Feature(metaclass=ABCMeta):
         return train_feat, test_feat
 
     def testMix_create_default_features(self, dtypes):
+        name = self.name.replace("testMix_", "")
         train_df, test_df = self.testMix_read_input()
-        train_df = train_df[[self.name]]
-        test_df = test_df[[self.name]]
+        train_df = train_df[[name]]
+        test_df = test_df[[name]]
         return train_df, test_df
 
     def read_input(self):
