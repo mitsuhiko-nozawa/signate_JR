@@ -6,7 +6,6 @@ exp_param:
   seeds: [0, 1, 2, 3, 4]
   exp_name: template
   features: 
-    - testMix_info
     - testMix_date_cv
     - testMix_id
     - testMix_date
