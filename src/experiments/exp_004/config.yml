@@ -30,7 +30,7 @@ prepro_param:
   drop_features:
     - id
     - delayTime
-    - isnanDelayTime
+    #- isnanDelayTime
   label_encode:
     - date
     - lineName
