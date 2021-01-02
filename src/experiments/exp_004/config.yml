@@ -18,9 +18,9 @@ exp_param:
     - testMix_continuedDelayTime
   y: testMix_delayTime
 
-  prepro_flag: False
-  train_flag: False
-  pred_flag: False
+  prepro_flag: True
+  train_flag: True
+  pred_flag: True
   log_flag: True
 
 
