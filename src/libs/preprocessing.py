@@ -63,7 +63,7 @@ class Preprocessing():
                     valid = train_df[train_df[cv_feat] == fold]
                     train_X = train[use_cols]
                     valid_X = valid[use_cols]
-                    train_y = train[[self.y]]
+                    train_y = train[[self.y.replace("testMix_", "")]]
                     valid_y = valid[[self.y]]
                     train_X.to_csv(osp.join(self.WORK_DIR, "train", f"train_X_{seed}_{fold}.csv"), index=False)
                     train_y.to_csv(osp.join(self.WORK_DIR, "train", f"train_y_{seed}_{fold}.csv"), index=False)
