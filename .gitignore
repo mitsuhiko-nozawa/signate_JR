@@ -4,3 +4,5 @@ src/input/*
 .vscode
 src/signateJR2020-d11d5341dabe.json
 src/serve_result.sh
+**/__pycache__/*
+**/.ipynb_checkpoints/*
