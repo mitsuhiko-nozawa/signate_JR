@@ -16,11 +16,11 @@ exp_param:
     - testMix_planArrival
     - testMix_delayTime
     - testMix_continuedDelayTime
-  y: delayTime
+  y: testMix_delayTime
 
-  prepro_flag: True
-  train_flag: True
-  pred_flag: True
+  prepro_flag: False
+  train_flag: False
+  pred_flag: False
   log_flag: True
 
 
