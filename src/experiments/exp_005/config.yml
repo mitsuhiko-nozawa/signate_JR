@@ -39,6 +39,7 @@ prepro_param:
     - trainNo
     - stopStation
     - planArrival
+    - cse
 
   
 

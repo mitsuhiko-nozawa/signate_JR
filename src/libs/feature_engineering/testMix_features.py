@@ -149,4 +149,6 @@ class testMix_info(Feature):
         info_df["cse"] = info_df["cse"].map(lambda x : "".join(sorted(x)))
         train_df = train_df.merge(info_df, on=["date", "lineName"], how="left")
         test_df = test_df.merge(info_df, on=["date", "lineName"], how="left")
+        train_df["cse"].fillna("None", inplace=True)
+        test_df["cse"].fillna("None", inplace=True)
         return train_df[["cse"]], test_df[["cse"]]
