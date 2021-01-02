@@ -71,10 +71,12 @@ class Feature(metaclass=ABCMeta):
     def testMix_read_input(self):
         train_df = pd.read_csv(osp.join(self.input_path, "train.csv"))
         test_df = pd.read_csv(osp.join(self.input_path, "test.csv"))
-        test_g = test_df.groupby(["date", "trainNo"])[["id", "delayTime"]].count()
+        train_df["date_trainNo"] = train_df["date"].astype("str") + " * " + train_df["trainNo"]
+        test_df["date_trainNo"] = test_df["date"].astype("str") + " * " + test_df["trainNo"]
+        test_g = test_df.groupby(["date_trainNo"])[["id", "delayTime"]].count()
         test_g = test_g[test_g["id"] == test_g["delayTime"]].reset_index()
-        test_Mix = test_df[(test_df["date"].isin(test_g["date"].values)) & (test_df["trainNo"].isin(test_g["trainNo"].values))]
-        train_df = train_df.append(test_Mix).drop(columns=["target"]).reset_index(drop=True) 
+        test_Mix = test_df[test_df["date_trainNo"].isin(test_g["date_trainNo"])]
+        train_df = train_df.append(test_Mix).drop(columns=["target"]).reset_index(drop=True).drop(columns=["date_trainNo"])        
         return train_df, test_df
 
     def read_feats(self, feats):
