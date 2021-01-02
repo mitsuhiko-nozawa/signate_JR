@@ -140,3 +140,13 @@ class testMix_desc_continuedDelayTime(Feature):
             train_df[feat_name] = train_df.groupby(["date", "trainNo"])["continuedDelayTime"].transform(agg)
             test_df[feat_name] = test_df.groupby(["date", "trainNo"])["continuedDelayTime"].transform(agg)
         return train_df[feats], test_df[feats]
+
+class testMix_info(Feature):
+    def create_features(self):
+        train_df, test_df = self.testMix_read_input()
+        info_df = pd.read_csv(osp.join(self.ROOT, "input", "info.csv"))
+        info_df = info_df.groupby(["date", "lineName"])["cse"].unique().reset_index()
+        info_df["cse"] = info_df["cse"].map(lambda x : "".join(sorted(x)))
+        train_df = train_df.merge(info_df, on=["date", "lineName"], how="left")
+        test_df = test_df.merge(info_df, on=["date", "lineName"], how="left")
+        return train_df[["cse"]], test_df[["cse"]]
