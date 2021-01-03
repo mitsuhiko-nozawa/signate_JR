@@ -20,7 +20,7 @@ exp_param:
     #- testMix_trainRatio
   y: testMix_delayTime
 
-  prepro_flag: True
+  prepro_flag: False
   train_flag: True
   pred_flag: True
   log_flag: True
