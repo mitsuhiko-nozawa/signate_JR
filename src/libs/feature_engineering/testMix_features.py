@@ -154,7 +154,7 @@ class testMix_info(Feature):
         test_df["cse"].fillna("None", inplace=True)
         return train_df[["cse"]], test_df[["cse"]]
 
-class testMix_ampm(Feature):
+class testMix_dateTransformed(Feature):
     def create_features(self):
         train_df, test_df = self.testMix_read_input()
         cols = ["hour", "minute", "ampm", "dayofWeek"]

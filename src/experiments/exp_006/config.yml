@@ -17,7 +17,7 @@ exp_param:
     - testMix_delayTime
     - testMix_continuedDelayTime
     - testMix_dateTransformed
-    - testMix_trainRatio
+    #- testMix_trainRatio
   y: testMix_delayTime
 
   prepro_flag: True
