@@ -1,4 +1,5 @@
 import os.path as osp
+import datetime
 import numpy as np
 import pandas as pd
 from .base import Feature
@@ -152,3 +153,15 @@ class testMix_info(Feature):
         train_df["cse"].fillna("None", inplace=True)
         test_df["cse"].fillna("None", inplace=True)
         return train_df[["cse"]], test_df[["cse"]]
+
+class testMix_ampm(Feature):
+    def create_features(self):
+        train_df, test_df = self.testMix_read_input()
+        cols = ["hour", "minute", "ampm", "dayofWeek"]
+        for df in [train_df, test_df]:
+            df["hour"] = df["planArrival"].map(lambda x : x[:2]).astype(int)
+            df["minute"] = df["planArrival"].map(lambda x : x[3:]).astype(int)
+            df["ampm"] = df["hour"].map(lambda x : 1 if x < 15 else 0)
+            df["dayofWeek"] = df["date"].map(lambda x : datetime.datetime(x//10000, (x%10000)//100, (x%100)).strftime('%A'))
+
+        return train_df[cols], test_df[cols]
