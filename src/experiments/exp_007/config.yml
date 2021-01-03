@@ -1,0 +1,63 @@
+exp_param: 
+  WORK_DIR: None # */exp_000
+  ROOT: None # */src
+  cv: date_cv
+  nfolds: 5
+  seeds: [0, 1, 2, 3, 4]
+  exp_name: template
+  features: 
+    - date_cv
+    - id
+    - date
+    - lineName
+    - directionCode
+    - trainNo
+    - stopStation
+    - planArrival
+    - delayTime
+    - continuedDelayTime
+    - dateTransformed
+    #- trainRatio
+  y: delayTime
+
+  prepro_flag: True
+  train_flag: True
+  pred_flag: True
+  log_flag: True
+
+
+prepro_param:
+  input_dir: input/
+  output_dir: my_features/
+  drop_features:
+    - id
+    - delayTime
+    - planArrival
+    #- isnanDelayTime
+  label_encode:
+    - date
+    - lineName
+    - directionCode
+    - trainNo
+    - stopStation
+    - dayofWeek
+
+  
+
+train_param: 
+  model: LGBM_Model
+  model_param: 
+    max_depth: 6
+    n_estimators: 10000
+    colsample_bytree: 0.5
+    num_leaves: 12
+    learning_rate: 0.1
+    objective: mae
+    verbose: -1
+    min_child_samples: 120
+    max_bin: 
+    early_stopping_rounds: 40
+    verbose_eval: 10
+
+  
+

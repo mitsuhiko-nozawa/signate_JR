@@ -140,3 +140,27 @@ class desc_continuedDelayTime(Feature):
             train_df[feat_name] = train_df.groupby(["date", "trainNo"])["continuedDelayTime"].transform(agg)
             test_df[feat_name] = test_df.groupby(["date", "trainNo"])["continuedDelayTime"].transform(agg)
         return train_df[feats], test_df[feats]
+
+class info(Feature):
+    def create_features(self):
+        train_df, test_df = self.read_input()
+        info_df = pd.read_csv(osp.join(self.ROOT, "input", "info.csv"))
+        info_df = info_df.groupby(["date", "lineName"])["cse"].unique().reset_index()
+        info_df["cse"] = info_df["cse"].map(lambda x : "".join(sorted(x)))
+        train_df = train_df.merge(info_df, on=["date", "lineName"], how="left")
+        test_df = test_df.merge(info_df, on=["date", "lineName"], how="left")
+        train_df["cse"].fillna("None", inplace=True)
+        test_df["cse"].fillna("None", inplace=True)
+        return train_df[["cse"]], test_df[["cse"]]
+
+class dateTransformed(Feature):
+    def create_features(self):
+        train_df, test_df = self.read_input()
+        cols = ["hour", "minute", "ampm", "dayofWeek"]
+        for df in [train_df, test_df]:
+            df["hour"] = df["planArrival"].map(lambda x : x[:2]).astype(int)
+            df["minute"] = df["planArrival"].map(lambda x : x[3:]).astype(int)
+            df["ampm"] = df["hour"].map(lambda x : 1 if x < 15 else 0)
+            df["dayofWeek"] = df["date"].map(lambda x : datetime.datetime(x//10000, (x%10000)//100, (x%100)).strftime('%A'))
+
+        return train_df[cols], test_df[cols]
