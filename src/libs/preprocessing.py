@@ -38,6 +38,7 @@ class Preprocessing():
                 f_class.run()
 
             train_df, test_df = self.read_feature()
+            train_df.to_csv(osp.join(self.WORK_DIR, "train", f"train.csv"), index=False)
             
             print("label encode")
             for feat in self.label_encode:

@@ -73,7 +73,12 @@ class Logging():
         preds = np.mean(np.array(preds), axis=0)
         preds = pd.DataFrame(preds, columns=["pred"])
         preds.to_csv(osp.join(self.val_pred_path, "oof_preds.csv"), index=False)
-        cv_score = mean_absolute_error(train_y[self.y.replace("testMix_", "")][:1488885], preds["pred"][:1488885])
+        temp = pd.read_csv(osp.join(self.ROOT, "train", "continuedDelayTime.feather"))
+        mask = temp["isnanDelayTime"] == 1
+        train_y = train_y[:1488885][mask]
+        preds = preds[:1488885][mask]
+
+        cv_score = mean_absolute_error(train_y[self.y.replace("testMix_", "")], preds["pred"])
         print(f"final cv : {cv_score}")
         return cv_score, cv_scores
 
