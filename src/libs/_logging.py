@@ -56,29 +56,29 @@ class Logging():
         preds = []
         cv_scores = []
         train_y = pd.read_feather(osp.join(self.ROOT, "my_features", "train", f"{self.y}.feather"))[:1488885]
-        temp = pd.read_feather(osp.join(self.ROOT, "my_features", "train", "continuedDelayTime.feather"))
-        mask = temp["isnanDelayTime"] == 1
+        cv_df = pd.read_feather(osp.join(self.ROOT, "my_features", "train", f"{self.cv}.feather"))[:1488885]
+        train_y = pd.concat([train_y, cv_df], axis=1)
         for seed in self.seeds:
             cv_feat = f"{self.cv}_{seed}"
-            oof_preds = pd.read_feather(osp.join(self.ROOT, "my_features", "train", f"{self.cv}.feather"))[:1488885]
-            oof_preds["pred"] = 0
-
+            mask = train_y[cv_feat] != -1
+            train_y["pred"] = np.nan
             for fold in range(self.nfolds):
                 val_preds = pd.read_csv(osp.join(self.val_pred_path, f"preds_{seed}_{fold}.csv"))
-                oof_preds["pred"][oof_preds[cv_feat] == fold] = val_preds["pred"].values
-            oof_preds = oof_preds[["pred"]]
-            oof_preds.to_csv(osp.join(self.val_pred_path, f"oof_preds_{seed}.csv"), index=False)
-            cv_score = mean_absolute_error(train_y[mask][self.y.replace("testMix_", "")], oof_preds[mask]["pred"])
+                train_y["pred"][train_y[cv_feat] == fold] = val_preds["pred"].values
+                
+            train_y[["pred"]].to_csv(osp.join(self.val_pred_path, f"oof_preds_{seed}.csv"), index=False)            
+            cv_score = mean_absolute_error(train_y[mask][self.y.replace("testMix_", "")], train_y[mask]["pred"])
             cv_scores.append(cv_score)
             print(f"seed {seed}, cv : {cv_score}")
-            preds.append(oof_preds["pred"].values)
+            preds.append(train_y["pred"].values)
         preds = np.mean(np.array(preds), axis=0)
         preds = pd.DataFrame(preds, columns=["pred"])
         preds.to_csv(osp.join(self.val_pred_path, "oof_preds.csv"), index=False)
-        train_y = train_y[:1488885][mask]
-        preds = preds[:1488885][mask]
-
-        cv_score = mean_absolute_error(train_y[self.y.replace("testMix_", "")], preds["pred"])
+        try:
+            cv_score = mean_absolute_error(train_y[mask][self.y.replace("testMix_", "")], preds[mask]["pred"])
+        except:
+            cv_score = np.mean(cv_scores)
+            print("mean cv")
         print(f"final cv : {cv_score}")
         return cv_score, cv_scores
 
