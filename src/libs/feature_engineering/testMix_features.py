@@ -63,8 +63,8 @@ class testMix_continuedDelayTime(Feature):
         test_df["isnanDelayTime"] = test_df["delayTime"].map(lambda x : 1 if x != x else 0)
         print(train_df["isnanDelayTime"].sum())
 
-        train_df[self.name] = train_df.groupby(["date", "trainNo"])["delayTime"].transform(lambda x: x.fillna(method="ffill").fillna(0))
-        test_df[self.name] = test_df.groupby(["date", "trainNo"])["delayTime"].transform(lambda x: x.fillna(method="ffill").fillna(0))       
+        train_df[self.name] = train_df.groupby(["date", "trainNo"])["delayTime"].transform(lambda x: x.fillna(method="ffill").fillna(-999))
+        test_df[self.name] = test_df.groupby(["date", "trainNo"])["delayTime"].transform(lambda x: x.fillna(method="ffill").fillna(-999))       
 
         return train_df[[self.name, "isnanDelayTime"]], test_df[[self.name, "isnanDelayTime"]]
 

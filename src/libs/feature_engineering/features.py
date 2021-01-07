@@ -62,8 +62,8 @@ class continuedDelayTime(Feature):
         test_df["isnanDelayTime"] = test_df["delayTime"].map(lambda x : 1 if x != x else 0)
         print(train_df["isnanDelayTime"].sum())
 
-        train_df[self.name] = train_df.groupby(["date", "trainNo"])["delayTime"].transform(lambda x: x.fillna(method="ffill").fillna(0))
-        test_df[self.name] = test_df.groupby(["date", "trainNo"])["delayTime"].transform(lambda x: x.fillna(method="ffill").fillna(0))       
+        train_df[self.name] = train_df.groupby(["date", "trainNo"])["delayTime"].transform(lambda x: x.fillna(method="ffill").fillna(-999))
+        test_df[self.name] = test_df.groupby(["date", "trainNo"])["delayTime"].transform(lambda x: x.fillna(method="ffill").fillna(-999))       
 
         return train_df[[self.name, "isnanDelayTime"]], test_df[[self.name, "isnanDelayTime"]]
 
@@ -187,7 +187,7 @@ class date_ampm_cv(Feature):
 
         return train_df[use_cols], None
 
-class timeSiries_cv(Feature):
+class timeSeries_cv(Feature):
     def create_features(self):
         train_df, test_df = self.read_input()
         for df in [train_df]:
@@ -207,5 +207,5 @@ class timeSiries_cv(Feature):
             for fold, (tr_ind, val_ind) in enumerate(kf.split(valid_df)):
                 val_date_ampm = valid_df.iloc[val_ind]["date_ampm"].tolist()
                 train_index = train_df[train_df["date_ampm"].isin(val_date_ampm)].query("801 <= planArrival_int <= 1400 or 1801 <= planArrival_int").index
-                train_df.loc[train_index, "KFold"] = fold
+                train_df.iloc[train_index, feat_name] = fold
         return train_df[use_cols], None
