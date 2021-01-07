@@ -85,7 +85,7 @@ class Logging():
         
     def create_feature_importances(self):
         models = []
-        for seed in [0, 1, 2, 3, 4]:
+        for seed in self.seeds:
             for fold in range(5):
                 p = osp.join(self.weight_path, f"{seed}_{fold}.pkl")
                 models.append(pickle.load(open(p, 'rb')))

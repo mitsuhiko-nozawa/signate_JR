@@ -164,3 +164,48 @@ class dateTransformed(Feature):
             df["dayofWeek"] = df["date"].map(lambda x : datetime.datetime(x//10000, (x%10000)//100, (x%100)).strftime('%A'))
 
         return train_df[cols], test_df[cols]
+
+class date_ampm_cv(Feature):
+    def create_features(self):
+        # test_featsはNoneで返す
+        # trainにしかないdateはランダムに5分割
+        # trainにもtestにもあるdateは、その日付内でtrainNoで5分割
+        # このcvはリークを全く許さない形式のcv
+        train_df, test_df = self.read_input()
+        train_df["ampm"] = train_df["planArrival"].map(lambda x : "am" if int(x[:2]) <= 14 else "pm")
+        train_df["date_ampm"] = train_df["date"].astype("str") + " * " + train_df["ampm"]
+        date_df = train_df.groupby("date_ampm")[["id"]].count().reset_index()
+        use_cols = []
+        for seed in self.seeds:
+            feat_name = f"{self.name}_{seed}"
+            use_cols.append(feat_name)
+            train_df[feat_name] = -1
+            kf = KFold(n_splits=self.nfolds, random_state=seed, shuffle=True)
+            for fold, (tr_ind, val_ind) in enumerate(kf.split(date_df)):
+                val_date = date_df.iloc[val_ind]["date_ampm"].to_list()
+                train_df[feat_name][train_df["date_ampm"].isin(val_date)] = fold
+
+        return train_df[use_cols], None
+
+class timeSiries_cv(Feature):
+    def create_features(self):
+        train_df, test_df = self.read_input()
+        for df in [train_df]:
+            df["ampm"] = df["planArrival"].map(lambda x : "am" if int(x[:2]) <= 14 else "pm")
+            df["hour"] = df["planArrival"].map(lambda x : int(x[:2]))
+            df["planArrival_int"] = df["planArrival"].map(lambda x : int(x.replace(":", "")))
+            df["date_ampm"] = df["date"].astype("str") + " * " + df["ampm"].astype("str")    
+        valid_df = train_df.query("801 <= planArrival_int <= 1400 or 1801 <= planArrival_int")
+        valid_df = valid_df.groupby(["date_ampm"]).count().reset_index()    
+
+        use_cols = []
+        for seed in self.seeds:
+            feat_name = f"{self.name}_{seed}"
+            use_cols.append(feat_name)
+            train_df[feat_name] = -1
+            kf = KFold(n_splits=self.nfolds, random_state=seed, shuffle=True)
+            for fold, (tr_ind, val_ind) in enumerate(kf.split(valid_df)):
+                val_date_ampm = valid_df.iloc[val_ind]["date_ampm"].tolist()
+                train_index = train_df[train_df["date_ampm"].isin(val_date_ampm)].query("801 <= planArrival_int <= 1400 or 1801 <= planArrival_int").index
+                train_df.loc[train_index, "KFold"] = fold
+        return train_df[use_cols], None
