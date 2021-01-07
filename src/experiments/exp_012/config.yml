@@ -20,10 +20,10 @@ exp_param:
     - date_trainNo
   y: delayTime
 
-  prepro_flag: True
-  train_flag: False
-  pred_flag: False
-  log_flag: False
+  prepro_flag: False
+  train_flag: True
+  pred_flag: True
+  log_flag: True
 
 
 prepro_param:
