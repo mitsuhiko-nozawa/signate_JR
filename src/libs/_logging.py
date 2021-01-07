@@ -55,12 +55,12 @@ class Logging():
     def calc_cv(self):
         preds = []
         cv_scores = []
-        train_y = pd.read_feather(osp.join(self.ROOT, "my_features", "train", f"{self.y}.feather"))
+        train_y = pd.read_feather(osp.join(self.ROOT, "my_features", "train", f"{self.y}.feather"))[:1488885]
         temp = pd.read_feather(osp.join(self.ROOT, "my_features", "train", "continuedDelayTime.feather"))
         mask = temp["isnanDelayTime"] == 1
         for seed in self.seeds:
             cv_feat = f"{self.cv}_{seed}"
-            oof_preds = pd.read_feather(osp.join(self.ROOT, "my_features", "train", f"{self.cv}.feather"))
+            oof_preds = pd.read_feather(osp.join(self.ROOT, "my_features", "train", f"{self.cv}.feather"))[:1488885]
             oof_preds["pred"] = 0
 
             for fold in range(self.nfolds):
@@ -68,7 +68,7 @@ class Logging():
                 oof_preds["pred"][oof_preds[cv_feat] == fold] = val_preds["pred"].values
             oof_preds = oof_preds[["pred"]]
             oof_preds.to_csv(osp.join(self.val_pred_path, f"oof_preds_{seed}.csv"), index=False)
-            cv_score = mean_absolute_error(train_y[:1488885][mask][self.y.replace("testMix_", "")], oof_preds[:1488885][mask]["pred"])
+            cv_score = mean_absolute_error(train_y[mask][self.y.replace("testMix_", "")], oof_preds[mask]["pred"])
             cv_scores.append(cv_score)
             print(f"seed {seed}, cv : {cv_score}")
             preds.append(oof_preds["pred"].values)
