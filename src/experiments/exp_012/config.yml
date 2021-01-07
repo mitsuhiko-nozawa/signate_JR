@@ -20,7 +20,7 @@ exp_param:
     - date_trainNo
   y: delayTime
 
-  prepro_flag: False
+  prepro_flag: True
   train_flag: True
   pred_flag: True
   log_flag: True
@@ -32,6 +32,7 @@ prepro_param:
   drop_features:
     - id
     - delayTime
+    - trainNo
   label_encode:
     - date
     - lineName
