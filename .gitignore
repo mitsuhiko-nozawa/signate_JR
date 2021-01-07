@@ -1,6 +1,6 @@
 # /
 .vscode
-~$メモ.pptx
+~$note.pptx
 # src/
 src/serve_result.sh
 src/signateJR2020-d11d5341dabe.json
@@ -12,5 +12,8 @@ src/input/*
 
 # src/my_features
 
+# src/experiments/*
+
+# anywhere
 **/__pycache__/*
 **/.ipynb_checkpoints/*
