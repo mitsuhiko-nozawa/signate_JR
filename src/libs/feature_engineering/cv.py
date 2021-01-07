@@ -97,5 +97,5 @@ class timeSeries_cv(Feature):
             for fold, (tr_ind, val_ind) in enumerate(kf.split(valid_df)):
                 val_date_ampm = valid_df.iloc[val_ind]["date_ampm"].tolist()
                 train_index = train_df[train_df["date_ampm"].isin(val_date_ampm)].query("801 <= planArrival_int <= 1400 or 1801 <= planArrival_int").index
-                train_df.iloc[train_index, feat_name] = fold
+                train_df.loc[train_index, feat_name] = fold
         return train_df[use_cols], None

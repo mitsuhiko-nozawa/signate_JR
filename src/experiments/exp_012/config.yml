@@ -21,9 +21,9 @@ exp_param:
   y: delayTime
 
   prepro_flag: True
-  train_flag: True
-  pred_flag: True
-  log_flag: True
+  train_flag: False
+  pred_flag: False
+  log_flag: False
 
 
 prepro_param:
