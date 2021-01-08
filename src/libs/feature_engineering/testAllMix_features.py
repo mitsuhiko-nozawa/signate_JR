@@ -112,7 +112,7 @@ class testAllMix_dateTransformed(Feature):
         cols = ["hour", "minute", "ampm", "dayofWeek"]
         for df in [train_df, test_df]:
             df["hour"] = df["planArrival"].map(lambda x : x[:2]).astype(int)
-            df["minute"] = df["planArrival"].map(lambda x : x[3:]).astype(int)
+            #df["minute"] = df["planArrival"].map(lambda x : x[3:]).astype(int)
             df["ampm"] = df["hour"].map(lambda x : 1 if x < 15 else 0)
             df["dayofWeek"] = df["date"].map(lambda x : datetime.datetime(x//10000, (x%10000)//100, (x%100)).strftime('%A'))
 
