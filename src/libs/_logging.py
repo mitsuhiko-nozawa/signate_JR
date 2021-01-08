@@ -64,6 +64,9 @@ class Logging():
             train_y["pred"] = np.nan
             for fold in range(self.nfolds):
                 val_preds = pd.read_csv(osp.join(self.val_pred_path, f"preds_{seed}_{fold}.csv"))
+                print(fold)
+                print(train_y["pred"][train_y[cv_feat] == fold].shape)
+                print(val_preds["pred"].values.shape)
                 train_y["pred"][train_y[cv_feat] == fold] = val_preds["pred"].values
                 
             train_y[["pred"]].to_csv(osp.join(self.val_pred_path, f"oof_preds_{seed}.csv"), index=False)            

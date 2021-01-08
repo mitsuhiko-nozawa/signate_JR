@@ -62,6 +62,13 @@ class Feature(metaclass=ABCMeta):
         train_df = train_df[[name]]
         test_df = test_df[[name]]
         return train_df, test_df
+    
+    def testAllMix_create_default_features(self, dtypes):
+        name = self.name.replace("testAllMix_", "")
+        train_df, test_df = self.testAllMix_read_input()
+        train_df = train_df[[name]]
+        test_df = test_df[[name]]
+        return train_df, test_df
 
     def read_input(self):
         train_df = pd.read_csv(osp.join(self.input_path, "train.csv"))
@@ -77,6 +84,12 @@ class Feature(metaclass=ABCMeta):
         test_g = test_g[test_g["id"] == test_g["delayTime"]].reset_index()
         test_Mix = test_df[test_df["date_trainNo"].isin(test_g["date_trainNo"])]
         train_df = train_df.append(test_Mix).drop(columns=["target"]).reset_index(drop=True).drop(columns=["date_trainNo"])        
+        return train_df, test_df
+    
+    def testAllMix_read_input(self):
+        train_df = pd.read_csv(osp.join(self.input_path, "train.csv"))
+        test_df = pd.read_csv(osp.join(self.input_path, "test.csv"))
+        train_df = pd.concat([train_df, test_df[test_df["delayTime"] >= 0].drop(columns=["target"])]).reset_index(drop=True)
         return train_df, test_df
 
     def read_feats(self, feats):
