@@ -1,0 +1,65 @@
+exp_param: 
+  WORK_DIR: None # */exp_000
+  ROOT: None # */src
+  cv: testAllMix_timeSeries_cv
+  nfolds: 2
+  seeds: [0]
+  exp_name: template
+  features: 
+    - testAllMix_timeSeries_cv
+    - testAllMix_id
+    - testAllMix_date
+    - testAllMix_lineName
+    - testAllMix_directionCode
+    - testAllMix_trainNo
+    - testAllMix_stopStation
+    - testAllMix_planArrival
+    - testAllMix_delayTime
+    - testAllMix_continuedDelayTime
+    - testAllMix_dateTransformed
+    - testAllMix_targetMean
+    #- testAllMix_info
+  y: delayTime
+
+  prepro_flag: True
+  train_flag: True
+  pred_flag: True
+  log_flag: True
+
+
+prepro_param:
+  input_dir: input/
+  output_dir: my_features/
+  drop_features:
+    - id
+    - delayTime
+    - minute
+  label_encode:
+    - date
+    - lineName
+    - directionCode
+    - trainNo
+    - stopStation
+    - planArrival
+    - dayofWeek
+
+  
+
+train_param: 
+  model: LGBM_Model
+  model_param: 
+    max_depth: 6
+    n_estimators: 10000
+    #colsample_bytree: 0.5
+    num_leaves: 12
+    learning_rate: 0.1
+    objective: mae
+    #saved_feature_importance_type : 1
+    verbose: -1
+    min_child_samples: 120
+    max_bin: 
+    early_stopping_rounds: 40
+    verbose_eval: 10
+
+  
+
