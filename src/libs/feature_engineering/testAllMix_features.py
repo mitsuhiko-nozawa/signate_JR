@@ -97,14 +97,35 @@ class testAllMix_desc_continuedDelayTime(Feature):
 class testAllMix_info(Feature):
     def create_features(self):
         train_df, test_df = self.testAllMix_read_input()
+        for df in [train_df, test_df]:
+            df["hour"] = df["planArrival"].map(lambda x : int(x[:2].replace(":", "")))
+            df["planArrival_int"] = df["planArrival"].map(lambda x : int(x.replace(":", "")))
+            df["ampm"] = df["hour"].map(lambda x : "am" if x <= 14 else "pm")
+
         info_df = pd.read_csv(osp.join(self.ROOT, "input", "info.csv"))
-        info_df = info_df.groupby(["date", "lineName"])["cse"].unique().reset_index()
-        info_df["cse"] = info_df["cse"].map(lambda x : "".join(sorted(x)))
-        train_df = train_df.merge(info_df, on=["date", "lineName"], how="left")
-        test_df = test_df.merge(info_df, on=["date", "lineName"], how="left")
-        train_df["cse"].fillna("None", inplace=True)
-        test_df["cse"].fillna("None", inplace=True)
-        return train_df[["cse"]], test_df[["cse"]]
+        info_df["hour"] = info_df["time"].map(lambda x : int(x[:2].replace(":", "")))
+        info_df["time_int"] = info_df["time"].map(lambda x : int(x.replace(":", "")))
+        info_df["ampm"] = info_df["hour"].map(lambda x : "am" if x <= 14 else "pm")
+        cses = info_df["cse"].unique()
+        info_df = pd.concat([info_df.drop(columns=["cse"]), pd.get_dummies(info_df["cse"])], axis=1)
+        info_g = info_df.groupby(["date", "ampm", "lineName"])
+
+        info_t = info_g.sum()[cses]
+        info_t["min_time"] = info_g["time_int"].min()
+        info_t["min_time-30"] = info_t["min_time"] -30
+        info_t["max_time"] = info_g["time_int"].max()
+        info_t[cses] = info_t[cses].clip(upper=1)
+        train_df = pd.merge(train_df, info_t.reset_index(), on=["date", "ampm", "lineName"], how="left", suffixes=["", "_info"])
+        test_df = pd.merge(test_df, info_t.reset_index(), on=["date", "ampm", "lineName"], how="left", suffixes=["", "_info"])
+
+        for df in [train_df, test_df]:
+            df["is_cse"] = df.apply(lambda x : 1 if x["min_time-30"] <= x["planArrival_int"] <= x["max_time"] else 0, axis=1)
+            for cse in cses:
+                df[cse] = (df["is_cse"] * df[cse]).fillna(0)
+            df["cseElapsedTime"] = (df["planArrival_int"] - df["min_time"]).fillna(-999)
+        cols = list(cses) + ["cseElapsedTime"]
+
+        return train_df[cols].astype("int32"), test_df[cols].astype("int32")
 
 class testAllMix_dateTransformed(Feature):
     def create_features(self):
@@ -117,3 +138,67 @@ class testAllMix_dateTransformed(Feature):
             df["dayofWeek"] = df["date"].map(lambda x : datetime.datetime(x//10000, (x%10000)//100, (x%100)).strftime('%A'))
 
         return train_df[cols], test_df[cols]
+
+class testAllMix_targetAgg(Feature):
+    def create_features(self):
+        train_df, test_df = self.testAllMix_read_input()
+        for df in [train_df, test_df]:
+            df["hour"] = df["planArrival"].map(lambda x : x[:2]).astype(int)
+            df["dayofWeek"] = df["date"].map(lambda x : datetime.datetime(x//10000, (x%10000)//100, (x%100)).strftime('%A'))
+            df["planArrival_int"] = df["planArrival"].map(lambda x : int(x.replace(":", "")))
+            df["planArrival_30binning"] = 0
+            col = "planArrival_int"
+            for t in np.arange(0, 2400, 100):
+                df.loc[(t <= df[col]) & (df[col] < t+30), "planArrival_30binning"] = t
+                df.loc[(t+30 <= df[col]) & (df[col] < t+60), "planArrival_30binning"] = t+30
+        colss = [
+            ["dayofWeek", "lineName", "directionCode", "planArrival_30binning"],
+            ["dayofWeek", "lineName", "directionCode", "hour"],
+            ["dayofWeek", "lineName", "directionCode"],
+            ["lineName", "directionCode", "planArrival_30binning"],
+            ["dayofWeek", "lineName", "planArrival_30binning"],
+        ]
+        res_cols = []
+        for cols in colss:
+            for method in ["mean", "median", "sum", "count", "var", "skew"]:
+                feat_name = "_".join(cols) + "_" + method
+                res_cols.append(feat_name)
+                for df in [train_df, test_df]:
+                    df[feat_name] = pd.concat([df[col].astype("str") + " * " for col in cols], axis=1).sum(axis=1)
+                agg_df = train_df.groupby(feat_name)["delayTime"].agg(method)
+                for df in [train_df, test_df]:
+                    df[feat_name] = df[feat_name].map(agg_df)
+
+        return train_df[res_cols], test_df[res_cols]
+
+class testAllMix_targetMean(Feature):
+    def create_features(self):
+        train_df, test_df = self.testAllMix_read_input()
+        for df in [train_df, test_df]:
+            df["hour"] = df["planArrival"].map(lambda x : x[:2]).astype(int)
+            df["dayofWeek"] = df["date"].map(lambda x : datetime.datetime(x//10000, (x%10000)//100, (x%100)).strftime('%A'))
+            df["planArrival_int"] = df["planArrival"].map(lambda x : int(x.replace(":", "")))
+            df["planArrival_30binning"] = 0
+            col = "planArrival_int"
+            for t in np.arange(0, 2400, 100):
+                df.loc[(t <= df[col]) & (df[col] < t+30), "planArrival_30binning"] = t
+                df.loc[(t+30 <= df[col]) & (df[col] < t+60), "planArrival_30binning"] = t+30
+        colss = [
+            ["dayofWeek", "lineName", "directionCode", "planArrival_30binning"],
+            ["dayofWeek", "lineName", "directionCode", "hour"],
+            ["dayofWeek", "lineName", "directionCode"],
+            ["lineName", "directionCode", "planArrival_30binning"],
+            ["dayofWeek", "lineName", "planArrival_30binning"],
+        ]
+        res_cols = []
+        for cols in colss:
+            for method in ["mean"]:
+                feat_name = "_".join(cols) + "_" + method
+                res_cols.append(feat_name)
+                for df in [train_df, test_df]:
+                    df[feat_name] = pd.concat([df[col].astype("str") + " * " for col in cols], axis=1).sum(axis=1)
+                agg_df = train_df.groupby(feat_name)["delayTime"].agg(method)
+                for df in [train_df, test_df]:
+                    df[feat_name] = df[feat_name].map(agg_df)
+
+        return train_df[res_cols], test_df[res_cols]
