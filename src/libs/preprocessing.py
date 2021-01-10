@@ -23,6 +23,7 @@ class Preprocessing():
         self.label_encode = param["label_encode"]
         self.y = param["y"]
         self.flag = param["prepro_flag"]
+        self.time_zone = param["time_zone"]
         
         self.ROOT = param["ROOT"] # */src
         self.WORK_DIR = param["WORK_DIR"]
@@ -54,6 +55,10 @@ class Preprocessing():
             #for feat in self.drop_feats:
             #    if feat in train_df.columns: train_df.drop(columns=[feat], inplace=True)
             #    if feat in test_df.columns: test_df.drop(columns=[feat], inplace=True)
+            
+            if len(self.time_zone) != 0:
+                train_df = train_df[train_df["hour"].isin(self.time_zone)]
+                test_df = test_df[test_df["hour"].isin(self.time_zone)]
 
             print("save data")
             cv_feats = [f"{self.cv}_{seed}" for seed in self.seeds]
