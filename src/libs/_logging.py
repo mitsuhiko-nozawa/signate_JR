@@ -25,6 +25,7 @@ class Logging():
         self.cv_scores = None
         self.feature_importances_fname = None
         self.submission_fname = osp.join(self.WORK_DIR, "submission.csv")
+        self.gcs_flag = param["exp_param"]["gcs_flag"]
 
         self.seeds = param["exp_param"]["seeds"]
         self.nfolds = param["exp_param"]["nfolds"]
@@ -32,6 +33,7 @@ class Logging():
         self.cv = param["exp_param"]["cv"]
         self.flag = param["exp_param"]["log_flag"]
         self.exp_name = param["exp_param"]["exp_name"]
+        self.time_zone = param["exp_param"]["time_zone"]
 
     def __call__(self):
         print("Logging")
@@ -46,27 +48,26 @@ class Logging():
             self.cv_score, self.cv_scores = self.calc_cv()
             self.create_feature_importances()
 
-            mlflow.set_tracking_uri(osp.join(self.WORK_DIR, "mlruns"))
-            self.create_mlflow()
-            self.upload_gcs()
+
+            if self.gcs_flag: 
+                mlflow.set_tracking_uri(osp.join(self.WORK_DIR, "mlruns"))
+                self.create_mlflow()
+                self.upload_gcs()
         
         
 
     def calc_cv(self):
         preds = []
         cv_scores = []
-        train_y = pd.read_feather(osp.join(self.ROOT, "my_features", "train", f"{self.y}.feather"))[:1488885]
-        cv_df = pd.read_feather(osp.join(self.ROOT, "my_features", "train", f"{self.cv}.feather"))[:1488885]
-        train_y = pd.concat([train_y, cv_df], axis=1)
+        train_y = pd.read_csv(osp.join(self.WORK_DIR, "train", "train.csv"))[:1488885]
+        if len(self.time_zone) != 0:
+            train_y = train_y[train_y["hour"].isin(self.time_zone)]
         for seed in self.seeds:
             cv_feat = f"{self.cv}_{seed}"
             mask = train_y[cv_feat] != -1
             train_y["pred"] = np.nan
             for fold in range(self.nfolds):
                 val_preds = pd.read_csv(osp.join(self.val_pred_path, f"preds_{seed}_{fold}.csv"))
-                print(fold)
-                print(train_y["pred"][train_y[cv_feat] == fold].shape)
-                print(val_preds["pred"].values.shape)
                 train_y["pred"][train_y[cv_feat] == fold] = val_preds["pred"].values
                 
             train_y[["pred"]].to_csv(osp.join(self.val_pred_path, f"oof_preds_{seed}.csv"), index=False)            
@@ -99,7 +100,10 @@ class Logging():
         feature_importance_df = pd.DataFrame()
         for i, model in enumerate(models):
             _df = pd.DataFrame()
-            _df['feature_importance'] = model.feature_importance()
+            try:
+                _df['feature_importance'] = model.feature_importance()
+            except:
+                _df['feature_importance'] = model.get_feature_importance()
             _df['column'] = feats
             _df['fold'] = i + 1
             feature_importance_df = pd.concat([feature_importance_df, _df], axis=0, ignore_index=True)

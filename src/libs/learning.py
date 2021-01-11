@@ -44,12 +44,12 @@ class Learning():
     def train_by_fold(self, seed, fold):
         # create oof_preds_seed_fold.csv
         # train and save model weight
-        train_X = pd.read_csv(osp.join(self.WORK_DIR, "train", f"train_X_{seed}_{fold}.csv")).values
+        train_X = pd.read_csv(osp.join(self.WORK_DIR, "train", f"train_X_{seed}_{fold}.csv"))
         train_y = pd.read_csv(osp.join(self.WORK_DIR, "train", f"train_y_{seed}_{fold}.csv"))
-        valid_X = pd.read_csv(osp.join(self.WORK_DIR, "valid", f"valid_X_{seed}_{fold}.csv")).values
+        valid_X = pd.read_csv(osp.join(self.WORK_DIR, "valid", f"valid_X_{seed}_{fold}.csv"))
         valid_y = pd.read_csv(osp.join(self.WORK_DIR, "valid", f"valid_y_{seed}_{fold}.csv"))
 
-        self.model_param["seed"] = seed
+        self.model_param["random_state"] = seed
         model = eval(self.model)(self.model_param)
         model.fit(train_X, train_y, valid_X, valid_y)
 

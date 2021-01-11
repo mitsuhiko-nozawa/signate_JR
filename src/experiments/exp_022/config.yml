@@ -1,13 +1,13 @@
 exp_param: 
   WORK_DIR: None # */exp_000
   ROOT: None # */src
-  cv: date_cv
+  cv: sameTimeZone_8_cv
   nfolds: 5
-  seeds: [0, 1, 2, 3, 4]
-  exp_name: template
-  time_zone: []
+  seeds: [0]
+  exp_name: exp_022
+  time_zone: [8]
   features: 
-    - date_cv
+    - sameTimeZone_8_cv
     - id
     - date
     - lineName
@@ -16,7 +16,18 @@ exp_param:
     - stopStation
     - planArrival
     - delayTime
-    - continuedDelayTime
+    - continuedDelayTime_8
+    - date_TrainNo_count
+    - dateTransformed
+    - hour_1_targetMean1
+    - hour_1_targetMean2
+    - hour_1_targetMean3
+    #- hour_1_targetMedian1
+    #- hour_1_targetMedian2
+    #- hour_1_targetMedian3
+    #- hour_1_targetMean4
+    #- minute_10_targetMean
+    #- zinshin
   y: delayTime
 
   prepro_flag: True
@@ -33,6 +44,9 @@ prepro_param:
     - id
     - delayTime
     - isnanDelayTime
+    - planArrival
+    - hour
+    - ampm
   label_encode:
     - date
     - lineName
@@ -40,24 +54,25 @@ prepro_param:
     - trainNo
     - stopStation
     - planArrival
+    - dayofWeek
 
   
 
 train_param: 
   model: LGBM_Model
   model_param: 
-    max_depth: 6
+    max_depth: 5
     n_estimators: 10000
-    colsample_bytree: 0.5
-    num_leaves: 12
+    colsample_bytree: 1.0
+    num_leaves: 17
     learning_rate: 0.1
     objective: mae
-    #saved_feature_importance_type : 1
     verbose: -1
     min_child_samples: 120
-    max_bin: 
-    early_stopping_rounds: 40
-    verbose_eval: 10
+    early_stopping_rounds: 100
+    max_bin: 300
+    reg_alpha: 0.01
+    reg_lambda: 0.01
 
   
 
