@@ -4,7 +4,7 @@ exp_param:
   cv: sameTimeZone_8_cv
   nfolds: 5
   seeds: [0]
-  exp_name: exp_022
+  exp_name: exp_026
   time_zone: [8]
   features: 
     - sameTimeZone_8_cv
@@ -17,17 +17,18 @@ exp_param:
     - planArrival
     - delayTime
     - continuedDelayTime_8
-    - date_TrainNo_count
+    #- date_TrainNo_count
     - dateTransformed
     - hour_1_targetMean1
     #- hour_1_targetMean2
     - hour_1_targetMean3
     #- hour_1_targetMean4
+    #- prod_feature
     #- minute_10_targetMean
     #- zinshin
   y: delayTime
 
-  prepro_flag: False
+  prepro_flag: True
   train_flag: True
   pred_flag: True
   log_flag: True
@@ -44,6 +45,8 @@ prepro_param:
     - planArrival
     - hour
     - ampm
+    #- is_firstTrain
+    #- is_lastTrain
   label_encode: []
   #  - date
   #  - lineName
