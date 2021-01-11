@@ -7,11 +7,11 @@ from sklearn.model_selection import KFold
 
 class sameTimeZone_8_cv(Feature):
     def create_features(self):
-        train_df, test_df = self.testAllMix_read_input()
+        train_df, test_df = self.read_input()
         hour = 8
         for df in [train_df]:
             df["ampm"] = df["planArrival"].map(lambda x : "am" if int(x[:2]) <= 14 else "pm")
-            df["hour"] = df["planArrival"].map(lambda x : int(x[:2]))
+            df["hour"] = df["planArrival"].map(lambda x : int(x[:2].replace(":", "")) if int(x[3:]) != 0 else int(x[:2].replace(":", ""))-1  )
             df["planArrival_int"] = df["planArrival"].map(lambda x : int(x.replace(":", "")))
             df["date_ampm"] = df["date"].astype("str") + " * " + df["ampm"].astype("str")    
         dates = train_df[train_df["hour"] == hour]["date"].unique()
@@ -29,11 +29,11 @@ class sameTimeZone_8_cv(Feature):
 
 class sameTimeZone_9_cv(Feature):
     def create_features(self):
-        train_df, test_df = self.testAllMix_read_input()
+        train_df, test_df = self.read_input()
         hour = 9
         for df in [train_df]:
             df["ampm"] = df["planArrival"].map(lambda x : "am" if int(x[:2]) <= 14 else "pm")
-            df["hour"] = df["planArrival"].map(lambda x : int(x[:2]))
+            df["hour"] = df["planArrival"].map(lambda x : int(x[:2].replace(":", "")) if int(x[3:]) != 0 else int(x[:2].replace(":", ""))-1  )
             df["planArrival_int"] = df["planArrival"].map(lambda x : int(x.replace(":", "")))
             df["date_ampm"] = df["date"].astype("str") + " * " + df["ampm"].astype("str")    
         dates = train_df[train_df["hour"] == hour]["date"].unique()
@@ -51,11 +51,11 @@ class sameTimeZone_9_cv(Feature):
 
 class sameTimeZone_18_cv(Feature):
     def create_features(self):
-        train_df, test_df = self.testAllMix_read_input()
+        train_df, test_df = self.read_input()
         hour = 18
         for df in [train_df]:
             df["ampm"] = df["planArrival"].map(lambda x : "am" if int(x[:2]) <= 14 else "pm")
-            df["hour"] = df["planArrival"].map(lambda x : int(x[:2]))
+            df["hour"] = df["planArrival"].map(lambda x : int(x[:2].replace(":", "")) if int(x[3:]) != 0 else int(x[:2].replace(":", ""))-1  )
             df["planArrival_int"] = df["planArrival"].map(lambda x : int(x.replace(":", "")))
             df["date_ampm"] = df["date"].astype("str") + " * " + df["ampm"].astype("str")    
         dates = train_df[train_df["hour"] == hour]["date"].unique()
@@ -73,11 +73,11 @@ class sameTimeZone_18_cv(Feature):
 
 class sameTimeZone_19_cv(Feature):
     def create_features(self):
-        train_df, test_df = self.testAllMix_read_input()
+        train_df, test_df = self.read_input()
         hour = 19
         for df in [train_df]:
             df["ampm"] = df["planArrival"].map(lambda x : "am" if int(x[:2]) <= 14 else "pm")
-            df["hour"] = df["planArrival"].map(lambda x : int(x[:2]))
+            df["hour"] = df["planArrival"].map(lambda x : int(x[:2].replace(":", "")) if int(x[3:]) != 0 else int(x[:2].replace(":", ""))-1  )
             df["planArrival_int"] = df["planArrival"].map(lambda x : int(x.replace(":", "")))
             df["date_ampm"] = df["date"].astype("str") + " * " + df["ampm"].astype("str")    
         dates = train_df[train_df["hour"] == hour]["date"].unique()

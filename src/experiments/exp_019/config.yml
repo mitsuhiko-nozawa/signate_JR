@@ -1,13 +1,13 @@
 exp_param: 
   WORK_DIR: None # */exp_000
   ROOT: None # */src
-  cv: date_cv
+  cv: sameTimeZone_9_cv
   nfolds: 5
-  seeds: [0, 1, 2, 3, 4]
-  exp_name: template
-  time_zone: []
+  seeds: [0]
+  exp_name: exp_019
+  time_zone: [9]
   features: 
-    - date_cv
+    - sameTimeZone_9_cv
     - id
     - date
     - lineName
@@ -17,13 +17,17 @@ exp_param:
     - planArrival
     - delayTime
     - continuedDelayTime
+    - date_TrainNo_count
+    - dateTransformed
+    - hour_1_targetMean1
+    - hour_1_targetMean2
+    - hour_1_targetMean3
   y: delayTime
 
   prepro_flag: True
   train_flag: True
   pred_flag: True
   log_flag: True
-  gcs_flag: False
 
 
 prepro_param:
@@ -33,6 +37,9 @@ prepro_param:
     - id
     - delayTime
     - isnanDelayTime
+    - planArrival
+    - hour
+    - ampm
   label_encode:
     - date
     - lineName
@@ -40,6 +47,7 @@ prepro_param:
     - trainNo
     - stopStation
     - planArrival
+    - dayofWeek
 
   
 

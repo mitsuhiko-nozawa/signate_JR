@@ -4,6 +4,7 @@ from feature_engineering.testAllMix_features import *
 from feature_engineering.cv import *
 from feature_engineering.testMix_cv import *
 from feature_engineering.testAllMix_cv import *
+from feature_engineering.sameTimeZone_cv import *
 import os
 import os.path as osp
 from sklearn.preprocessing import LabelEncoder
@@ -43,7 +44,11 @@ class Preprocessing():
                 f_class.run()
 
             train_df, test_df = self.read_feature()
-            train_df.to_csv(osp.join(self.WORK_DIR, "train", f"train.csv"), index=False)
+            if len(self.time_zone) != 0:
+                train_df = train_df[train_df["hour"].isin(self.time_zone)]
+                test_df = test_df[test_df["hour"].isin(self.time_zone)]
+            train_df.to_csv(osp.join(self.WORK_DIR, "train", "train.csv"), index=False)
+            test_df.to_csv(osp.join(self.WORK_DIR, "test", "test.csv"), index=False)
             
             print("label encode")
             for feat in self.label_encode:
