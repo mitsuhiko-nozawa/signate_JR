@@ -3,7 +3,7 @@ exp_param:
   ROOT: None # */src
   cv: sameTimeZone_19_cv
   nfolds: 5
-  seeds: [15, 16, 17, 18, 19]
+  seeds: [15]
   exp_name: exp_025
   time_zone: [19]
   features: 
@@ -22,6 +22,9 @@ exp_param:
     - hour_1_targetMean1
     - hour_1_targetMean2
     - hour_1_targetMean3
+    - hour_1_targetMean4
+    - prod_feature
+    - minute_10_targetMean
   y: delayTime
 
   prepro_flag: True
@@ -41,6 +44,8 @@ prepro_param:
     - planArrival
     - hour
     - ampm
+    - is_firstTrain
+    - is_lastTrain
   label_encode:
     - date
     - lineName
@@ -49,6 +54,7 @@ prepro_param:
     - stopStation
     - planArrival
     - dayofWeek
+    - prod_feat_0
 
   
 

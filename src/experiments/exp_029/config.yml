@@ -4,7 +4,7 @@ exp_param:
   cv: sameTimeZone_19_cv
   nfolds: 5
   seeds: [15]
-  exp_name: exp_025
+  exp_name: exp_029
   time_zone: [19]
   features: 
     - sameTimeZone_19_cv
@@ -17,11 +17,15 @@ exp_param:
     - planArrival
     - delayTime
     - continuedDelayTime_19
-    - date_TrainNo_count
+    #- date_TrainNo_count
     - dateTransformed
     - hour_1_targetMean1
-    - hour_1_targetMean2
+    #- hour_1_targetMean2
     - hour_1_targetMean3
+    #- hour_1_targetMean4
+    #- prod_feature
+    #- minute_10_targetMean
+    #- zinshin
 
   y: delayTime
 
@@ -42,14 +46,14 @@ prepro_param:
     - planArrival
     - hour
     - ampm
-  label_encode:
-    - date
-    - lineName
-    - directionCode
-    - trainNo
-    - stopStation
-    - planArrival
-    - dayofWeek
+  label_encode: []
+    #- date
+    #- lineName
+    #- directionCode
+    #- trainNo
+    #- stopStation
+    #- planArrival
+    #- dayofWeek
 
   
 

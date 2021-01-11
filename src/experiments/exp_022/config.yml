@@ -25,8 +25,9 @@ exp_param:
     #- hour_1_targetMedian1
     #- hour_1_targetMedian2
     #- hour_1_targetMedian3
-    #- hour_1_targetMean4
-    #- minute_10_targetMean
+    - hour_1_targetMean4
+    - prod_feature
+    - minute_10_targetMean
     #- zinshin
   y: delayTime
 
@@ -47,6 +48,8 @@ prepro_param:
     - planArrival
     - hour
     - ampm
+    - is_firstTrain
+    - is_lastTrain
   label_encode:
     - date
     - lineName
@@ -55,6 +58,7 @@ prepro_param:
     - stopStation
     - planArrival
     - dayofWeek
+    - prod_feat_0
 
   
 

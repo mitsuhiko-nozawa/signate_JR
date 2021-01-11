@@ -55,13 +55,15 @@ class continuedDelayTime_8(Feature):
             df[self.name] = df.groupby(["date", "trainNo"])[self.name].transform(lambda x: x.fillna(method="ffill"))
             df["isnanDelayTime"] = df[self.name].isnull().astype("int")
             df["continuedDelayTime_Mean"] = df.groupby(["date", "lineName", "directionCode", "hour"])[self.name].transform("mean")
+            df["continuedDelayTime_Mean2"] = df.groupby(["date", "lineName", "directionCode", "hour", "stopStation"])[self.name].transform("mean")
             df[self.name] = df[self.name].fillna(-999)
         test_df["hour"] = test_df["planArrival"].map(lambda x : int(x[:2].replace(":", "")) if int(x[3:]) != 0 else int(x[:2].replace(":", ""))-1  )
         test_df["isnanDelayTime"] = test_df["delayTime"].isnull().astype("int")
         test_df[self.name] = test_df.groupby(["date", "trainNo"])["delayTime"].transform(lambda x: x.fillna(method="ffill"))
         test_df["continuedDelayTime_Mean"] = test_df.groupby(["date", "lineName", "directionCode", "hour"])[self.name].transform("mean")
+        test_df["continuedDelayTime_Mean2"] = test_df.groupby(["date", "lineName", "directionCode", "hour", "stopStation"])[self.name].transform("mean")
         test_df[self.name] = test_df[self.name].fillna(-999)
-        return train_df[[self.name, "continuedDelayTime_Mean", "isnanDelayTime"]], test_df[[self.name, "continuedDelayTime_Mean", "isnanDelayTime"]]
+        return train_df[[self.name, "continuedDelayTime_Mean", "continuedDelayTime_Mean2", "isnanDelayTime"]], test_df[[self.name, "continuedDelayTime_Mean", "continuedDelayTime_Mean2", "isnanDelayTime"]]
 
 class continuedDelayTime_9(Feature):
     def create_features(self):
@@ -74,13 +76,15 @@ class continuedDelayTime_9(Feature):
             df[self.name] = df.groupby(["date", "trainNo"])[self.name].transform(lambda x: x.fillna(method="ffill"))
             df["isnanDelayTime"] = df[self.name].isnull().astype("int")
             df["continuedDelayTime_Mean"] = df.groupby(["date", "lineName", "directionCode", "hour"])[self.name].transform("mean")
+            df["continuedDelayTime_Mean2"] = df.groupby(["date", "lineName", "directionCode", "hour", "stopStation"])[self.name].transform("mean")
             df[self.name] = df[self.name].fillna(-999)
         test_df["hour"] = test_df["planArrival"].map(lambda x : int(x[:2].replace(":", "")) if int(x[3:]) != 0 else int(x[:2].replace(":", ""))-1  )
         test_df["isnanDelayTime"] = test_df["delayTime"].isnull().astype("int")
         test_df[self.name] = test_df.groupby(["date", "trainNo"])["delayTime"].transform(lambda x: x.fillna(method="ffill"))
         test_df["continuedDelayTime_Mean"] = test_df.groupby(["date", "lineName", "directionCode", "hour"])[self.name].transform("mean")
+        test_df["continuedDelayTime_Mean2"] = test_df.groupby(["date", "lineName", "directionCode", "hour", "stopStation"])[self.name].transform("mean")
         test_df[self.name] = test_df[self.name].fillna(-999)
-        return train_df[[self.name, "continuedDelayTime_Mean", "isnanDelayTime"]], test_df[[self.name, "continuedDelayTime_Mean", "isnanDelayTime"]]
+        return train_df[[self.name, "continuedDelayTime_Mean", "continuedDelayTime_Mean2", "isnanDelayTime"]], test_df[[self.name, "continuedDelayTime_Mean", "continuedDelayTime_Mean2", "isnanDelayTime"]]
 
 class continuedDelayTime_18(Feature):
     def create_features(self):
@@ -93,13 +97,15 @@ class continuedDelayTime_18(Feature):
             df[self.name] = df.groupby(["date", "trainNo"])[self.name].transform(lambda x: x.fillna(method="ffill"))
             df["isnanDelayTime"] = df[self.name].isnull().astype("int")
             df["continuedDelayTime_Mean"] = df.groupby(["date", "lineName", "directionCode", "hour"])[self.name].transform("mean")
+            df["continuedDelayTime_Mean2"] = df.groupby(["date", "lineName", "directionCode", "hour", "stopStation"])[self.name].transform("mean")
             df[self.name] = df[self.name].fillna(-999)
         test_df["hour"] = test_df["planArrival"].map(lambda x : int(x[:2].replace(":", "")) if int(x[3:]) != 0 else int(x[:2].replace(":", ""))-1  )
         test_df["isnanDelayTime"] = test_df["delayTime"].isnull().astype("int")
         test_df[self.name] = test_df.groupby(["date", "trainNo"])["delayTime"].transform(lambda x: x.fillna(method="ffill"))
         test_df["continuedDelayTime_Mean"] = test_df.groupby(["date", "lineName", "directionCode", "hour"])[self.name].transform("mean")
+        test_df["continuedDelayTime_Mean2"] = test_df.groupby(["date", "lineName", "directionCode", "hour", "stopStation"])[self.name].transform("mean")
         test_df[self.name] = test_df[self.name].fillna(-999)
-        return train_df[[self.name, "continuedDelayTime_Mean", "isnanDelayTime"]], test_df[[self.name, "continuedDelayTime_Mean", "isnanDelayTime"]]
+        return train_df[[self.name, "continuedDelayTime_Mean", "continuedDelayTime_Mean2", "isnanDelayTime"]], test_df[[self.name, "continuedDelayTime_Mean", "continuedDelayTime_Mean2", "isnanDelayTime"]]
 
 class continuedDelayTime_19(Feature):
     def create_features(self):
@@ -112,21 +118,31 @@ class continuedDelayTime_19(Feature):
             df[self.name] = df.groupby(["date", "trainNo"])[self.name].transform(lambda x: x.fillna(method="ffill"))
             df["isnanDelayTime"] = df[self.name].isnull().astype("int")
             df["continuedDelayTime_Mean"] = df.groupby(["date", "lineName", "directionCode", "hour"])[self.name].transform("mean")
+            df["continuedDelayTime_Mean2"] = df.groupby(["date", "lineName", "directionCode", "hour", "stopStation"])[self.name].transform("mean")
             df[self.name] = df[self.name].fillna(-999)
         test_df["hour"] = test_df["planArrival"].map(lambda x : int(x[:2].replace(":", "")) if int(x[3:]) != 0 else int(x[:2].replace(":", ""))-1  )
         test_df["isnanDelayTime"] = test_df["delayTime"].isnull().astype("int")
         test_df[self.name] = test_df.groupby(["date", "trainNo"])["delayTime"].transform(lambda x: x.fillna(method="ffill"))
         test_df["continuedDelayTime_Mean"] = test_df.groupby(["date", "lineName", "directionCode", "hour"])[self.name].transform("mean")
+        test_df["continuedDelayTime_Mean2"] = test_df.groupby(["date", "lineName", "directionCode", "hour", "stopStation"])[self.name].transform("mean")
         test_df[self.name] = test_df[self.name].fillna(-999)
-        return train_df[[self.name, "continuedDelayTime_Mean", "isnanDelayTime"]], test_df[[self.name, "continuedDelayTime_Mean", "isnanDelayTime"]]
+        return train_df[[self.name, "continuedDelayTime_Mean", "continuedDelayTime_Mean2", "isnanDelayTime"]], test_df[[self.name, "continuedDelayTime_Mean", "continuedDelayTime_Mean2", "isnanDelayTime"]]
 
 
 class date_TrainNo_count(Feature):
     def create_features(self):
         train_df, test_df = self.read_input()
-        train_df[self.name] = train_df.groupby(["date", "trainNo"])["id"].transform("count")
-        test_df[self.name] = test_df.groupby(["date", "trainNo"])["id"].transform("count")
-        return train_df[[self.name]], test_df[[self.name]]
+        cols = ["dateAmpmTrainNo_Count", "trainSeq_Order", "trainSeq_Ratio", "is_firstTrain", "is_lastTrain"]
+        for df in [train_df, test_df]:
+            df["hour"] = df["planArrival"].map(lambda x : int(x[:2].replace(":", "")) if int(x[3:]) != 0 else int(x[:2].replace(":", ""))-1  )
+            df["ampm"] = df["hour"].map(lambda x : "am" if x < 15 else "pm")
+            df["dateAmpmTrainNo_Count"] = df.groupby(["date", "ampm", "trainNo"])["id"].transform("count")
+            df["trainSeq_Order"] = df.groupby(["date", "ampm", "trainNo"])["id"].transform(lambda x : x - x.iloc[0] + 1)
+            df["trainSeq_Ratio"] = df["trainSeq_Order"] / df["dateAmpmTrainNo_Count"]
+            df["is_firstTrain"] = (df["trainSeq_Order"] == 1).astype("int")
+            df["is_lastTrain"] = (df["trainSeq_Order"] == df["dateAmpmTrainNo_Count"]).astype("int")
+
+        return train_df[cols], test_df[cols]
 
 
 class info(Feature):
@@ -242,3 +258,23 @@ class zinshin(Feature):
             df["elapsedTime_zhinshin"] = df["planArrival_int"] - train_df["time_min"]
         cols = ["is_zinshin", "is_zinshinPeriod", "is_zinshinPeriod_30", "elapsedTime_zhinshin"]
         return train_df[cols], test_df[cols]
+
+class prod_feature(Feature):
+    def create_features(self):
+        train_df, test_df = self.read_input()
+        use_cols = []
+        colss = [
+            ["date", "ampm", "lineName", "directionCode", "stopStation"],
+        ]
+        for df in [train_df, test_df]:
+            df["hour"] = df["planArrival"].map(lambda x : int(x[:2].replace(":", "")) if int(x[3:]) != 0 else int(x[:2].replace(":", ""))-1  )
+            df["ampm"] = df["hour"].map(lambda x : "am" if x < 15 else "pm")
+
+        for i, cols in enumerate(colss):
+            feat_name = f"prod_feat_{i}"
+            use_cols.append(feat_name)
+            for df in [train_df, test_df]:
+                df[feat_name] = ""
+                df[feat_name] = df[feat_name].str.cat(df[col].astype(str) for col in cols)
+
+        return train_df[use_cols], test_df[use_cols]
