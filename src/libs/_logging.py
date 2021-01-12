@@ -74,12 +74,12 @@ class Logging():
             cv_score = mean_absolute_error(train_y[mask][self.y.replace("testMix_", "")], train_y[mask]["pred"])
             cv_scores.append(cv_score)
             print(f"seed {seed}, cv : {cv_score}")
-            preds.append(train_y["pred"].values)
-        preds = np.mean(np.array(preds), axis=0)
+            preds.append(train_y["pred"].values.copy()) # copy!!!!!
+        preds = np.mean(np.array(preds), axis=0).reshape(-1,)
         preds = pd.DataFrame(preds, columns=["pred"])
         preds.to_csv(osp.join(self.val_pred_path, "oof_preds.csv"), index=False)
         try:
-            cv_score = mean_absolute_error(train_y[mask][self.y.replace("testMix_", "")], preds[mask]["pred"])
+            cv_score = mean_absolute_error(train_y[mask][self.y.replace("testMix_", "")], preds["pred"])
         except:
             cv_score = np.mean(cv_scores)
             print("mean cv")
