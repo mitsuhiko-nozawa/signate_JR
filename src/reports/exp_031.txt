@@ -1,0 +1,48 @@
+LB 1.15 -> 1.08
+8:01~9:00, 9:01~10:00, 18:01~19:00, 19:01~20:00,の4つの時間帯でデータをわけ、それぞれ別のモデルで予測を行わせた。
+モデルをLightGBMからCatBoostに変えた。CatBoostはデフォルトパラメータが優秀
+
+LB 1.08 -> 1.06
+単に引き継がせるより、予測値の方がMAEが低い場合は引き継がせずに予測値を採用
+
+(特徴量)
+引き継いだdelayTimeをそのまま特徴として追加
+引き継いだdelayTimeを使って、カテゴリ変数で平均集約
+- date * lineName * directionCode * hour
+- date * lineName * directionCode * stopStation * hour
+
+時間前のdelayTimeをカテゴリ変数で平均集約してencodeする特徴
+- date
+- date * lineName (not use)
+- date * lineName * directionCode
+- date * lineName * directionCode * stopStation
+
+(cv)
+hour 8, continued cv: 1.1218452522715627, continued pred cv: 1.0529532887733863, pred cv: 1.4575142416654647
+time zone 8's pred is better than continued
+hour 9, continued cv: 0.6505140109434588, continued pred cv: 0.6463228393366044, pred cv: 0.9482777623332334
+time zone 9's pred is better than continued
+hour 18, continued cv: 0.7283366072421333, continued pred cv: 0.7819211518330913, pred cv: 1.2957445119480793
+hour 19, continued cv: 0.6252232078221673, continued pred cv: 0.7948947784572838, pred cv: 1.0096309433899746
+overall cv: 0.9689064499732378　(LB 1.06)
+
+※continued cv : ベンチマークと同じうようにdelayTimeを引き継がせたcv
+※continued pred cv : ベンチマークのように引き継ぐことができる部分の予測値のcv
+※pred cv : その時間帯全体の予測値のcv
+※overall cv :  8, 9, 18, 19の時間帯のcv(continued cv と continued cv でよかった方を採用)
+※LightGBMは overall cv が0.989程度
+
+
+(考察)
+全部予測値を当てたsubはLB1.15
+他のテーブルのデータをうまく使えていない
+特徴によって、continuedの方には悪影響、じゃない方には良い影響、トータル悪影響のようなものもあり、見極めが難しい
+trainは、8:01~9:00台のモデルなら7:40~9:20などtrainデータを増やすとどうなるか
+引き継げる区間は時系列モデルとして予測できる？
+あるstopStationで、planArrivalをx軸にとってターゲットをプロットすると、遅延が引き継がれてそうなことが読み取れる
+rug特徴量がもっとバリエーション欲しい
+時間あればTabnetを試す
+
+
+
+

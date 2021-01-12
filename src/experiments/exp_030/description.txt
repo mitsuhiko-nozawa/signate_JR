@@ -1,0 +1,6 @@
+hour 8, continued cv: 1.1218452522715627, continued pred cv: 1.0512637784878236, pred cv: 1.4839198663646747
+time zone 8's pred is better than continued
+hour 9, continued cv: 0.6505140109434588, continued pred cv: 0.6241373403227369, pred cv: 1.0884378124893912
+time zone 9's pred is better than continued
+hour 18, continued cv: 0.7283366072421333, continued pred cv: 0.7547965442201763, pred cv: 1.3132511227442865
+hour 19, continued cv: 0.6252232078221673, continued pred cv: 0.8272039672235353, pred cv: 1.03864131910515
