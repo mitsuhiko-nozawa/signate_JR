@@ -277,4 +277,5 @@ class prod_feature(Feature):
                 df[feat_name] = ""
                 df[feat_name] = df[feat_name].str.cat(df[col].astype(str) for col in cols)
 
+
         return train_df[use_cols], test_df[use_cols]
