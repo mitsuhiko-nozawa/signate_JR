@@ -43,7 +43,7 @@ def main() -> None:
         if continued_cv > continued_pred_cv:
             train_df.loc[train_df["hour"] == h, "pred2"] = train_df[train_df["hour"] == h]["pred"]  # 書き換え
             pred_zone.append(h)
-            print(f"time zone {}'s pred is better than continued")
+            print(f"time zone {h}'s pred is better than continued")
     train_df["err2"] = np.abs(train_df["delayTime"] - train_df["pred_2"])
     cv = train_df[train_df["hour"].isin([8, 9, 18, 19])]["err2"].mean()
     print(f"overall cv: {cv}")
