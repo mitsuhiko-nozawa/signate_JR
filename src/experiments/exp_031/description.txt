@@ -39,4 +39,3 @@ time zone 9's pred is better than continued
 hour 18, continued cv: 0.7283366072421333, continued pred cv: 0.7723535060160832, pred cv: 1.3036536386391446
 hour 19, continued cv: 0.6252232078221673, continued pred cv: 0.7948947784572838, pred cv: 1.0096309433899746
 overall cv: 0.9452484607306441
-
