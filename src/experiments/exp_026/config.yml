@@ -26,6 +26,7 @@ exp_param:
     #- prod_feature
     #- minute_10_targetMean
     #- zinshin
+    - stationDetail
   y: delayTime
 
   prepro_flag: True

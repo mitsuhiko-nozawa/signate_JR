@@ -41,11 +41,12 @@ def main() -> None:
         pred_cv = temp_df[temp_df["isnan_pred"] == 1]["err1"].mean()
         print(f"hour {h}, continued cv: {continued_cv}, continued pred cv: {continued_pred_cv}, pred cv: {pred_cv}")
         if continued_cv > continued_pred_cv:
-            train_df.loc[train_df["hour"] == h, "pred2"] = train_df[train_df["hour"] == h]["pred"]  # 書き換え
+            train_df.loc[train_df["hour"] == h, "pred_2"] = train_df[train_df["hour"] == h]["pred"]  # 書き換え
             pred_zone.append(h)
             print(f"time zone {h}'s pred is better than continued")
     train_df["err2"] = np.abs(train_df["delayTime"] - train_df["pred_2"])
     cv = train_df[train_df["hour"].isin([8, 9, 18, 19])]["err2"].mean()
+    train_df[train_df["hour"].isin([8, 9, 18, 19])].to_csv("train.csv", index=False)
     print(f"overall cv: {cv}")
 
 

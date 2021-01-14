@@ -1,0 +1,14 @@
+seed 10, cv : 1.0115260079398278
+final cv : 1.0115260079398278
+
+stationDetailあり
+seed 10, cv : 1.0172826326443514
+final cv : 1.0172826326443514
+
+nextStation_prevMean_from30なし
+seed 10, cv : 1.025506937579455
+final cv : 1.025506937579455
+
+lastStation_prevMean_from30なし
+
+

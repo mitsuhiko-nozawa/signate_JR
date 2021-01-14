@@ -26,6 +26,7 @@ exp_param:
     #- prod_feature
     #- minute_10_targetMean
     #- zinshin
+    #- stationDetail
   y: delayTime
 
   prepro_flag: True
@@ -45,6 +46,8 @@ prepro_param:
     - planArrival
     - hour
     - ampm
+    #- lastStation_prevMean_from30
+    #- nextStation_prevMean_from30
   label_encode: []
     #- date
     #- lineName

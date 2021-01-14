@@ -279,3 +279,31 @@ class prod_feature(Feature):
 
 
         return train_df[use_cols], test_df[use_cols]
+
+class stationDetail(Feature):
+    def create_features(self):
+        train_df, test_df = self.read_input()
+        use_cols = ["lastStation", "prevStation", "nextStation", "lastStation_prevMean_from30", "nextStation_prevMean_from30"]
+        for df in [train_df, test_df]:
+            df["hour"] = df["planArrival"].map(lambda x : int(x[:2].replace(":", "")) if int(x[3:]) != 0 else int(x[:2].replace(":", ""))-1  )
+            df["hour-1"] = df["hour"] - 1
+            df["minute"] = df["planArrival"].map(lambda x : (int(x[3:])+59)%60) # 01 -> 00分
+            df["lastStation"] = df.groupby(["date", "trainNo"])["stopStation"].transform(lambda x : x.iloc[x.shape[0]-1])
+            df["nextStation"] = df.groupby(["date", "trainNo"])["stopStation"].transform(lambda x : x.shift(-1).fillna("None"))
+            df["prevStation"] = df.groupby(["date", "trainNo"])["stopStation"].transform(lambda x : x.shift(1).fillna("None"))
+
+            cols = ["date", "lineName", "directionCode"]
+            col = "lastStation_prevMean_from30"
+            agg_df = df[df["minute"] >= 30].groupby(cols+["stopStation", "hour"])["delayTime"].mean().reset_index().rename(columns={"delayTime" : col, "hour" : "hour-1", "stopStation" : "lastStation"})
+            temp = pd.merge(df, agg_df, on=cols+["lastStation", "hour-1"], how="left")
+            df[col] = temp[col].values.copy()
+
+            col2 = "nextStation_prevMean_from30"
+            agg_df = agg_df.rename(columns={col : col2, "lastStation" : "nextStation"})
+            temp = pd.merge(df, agg_df, on=cols+["nextStation", "hour-1"], how="left")
+            df[col2] = temp[col].values.copy()
+
+
+
+
+        return train_df[use_cols], test_df[use_cols]

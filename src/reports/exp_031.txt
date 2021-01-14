@@ -24,7 +24,7 @@ hour 9, continued cv: 0.6505140109434588, continued pred cv: 0.6463228393366044,
 time zone 9's pred is better than continued
 hour 18, continued cv: 0.7283366072421333, continued pred cv: 0.7819211518330913, pred cv: 1.2957445119480793
 hour 19, continued cv: 0.6252232078221673, continued pred cv: 0.7948947784572838, pred cv: 1.0096309433899746
-overall cv: 0.9689064499732378　(LB 1.06)
+overall cv: 0.9563779641024636 (LB 1.06)
 
 ※continued cv : ベンチマークと同じうようにdelayTimeを引き継がせたcv
 ※continued pred cv : ベンチマークのように引き継ぐことができる部分の予測値のcv

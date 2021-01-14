@@ -1,0 +1,15 @@
+1なし、2あり
+seed 15, cv : 0.8680752056589183
+final cv : 0.8680752056589183
+
+stationDetailあり
+seed 15, cv : 0.9647733244690747
+final cv : 0.9647733244690747
+
+nextStation_prevMean_from30なし
+seed 15, cv : 0.9388391748681651
+final cv : 0.9388391748681651
+
+Meanなし
+seed 15, cv : 0.9647733244690747
+final cv : 0.9647733244690747

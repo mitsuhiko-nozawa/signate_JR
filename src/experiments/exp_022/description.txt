@@ -1,0 +1,6 @@
+best?
+
+
+stationDetailあり
+seed 5, cv : 0.7245984760242328
+final cv : 0.7245984760242328
