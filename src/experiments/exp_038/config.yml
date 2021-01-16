@@ -1,0 +1,88 @@
+exp_param: 
+  WORK_DIR: None # */exp_000
+  ROOT: None # */src
+  cv: sameTimeZone_18_cv
+  nfolds: 5
+  seeds: [10]
+  exp_name: exp_034
+  time_zone: [18]
+  features: 
+    - sameTimeZone_18_cv
+    - id
+    - date
+    - lineName
+    - directionCode
+    - trainNo
+    - stopStation
+    - planArrival
+    - delayTime
+    - continuedDelayTime_18
+    - date_TrainNo_count
+    - dateTransformed
+    #- hour_1_targetMean1
+    #- hour_1_targetMean2
+    #- hour_1_targetMean3
+    - hour_1_targetMean4
+    #- prod_feature
+    #- minute_10_targetMean
+    #- zinshin
+    - stationDetail
+    - continuedFeatures_18
+  y: delayTime
+
+  prepro_flag: True
+  train_flag: True
+  pred_flag: True
+  log_flag: True
+  gcs_flag: False
+
+  only_continued: False
+  only_not_continued: True
+
+
+prepro_param:
+  input_dir: input/
+  output_dir: my_features/
+  drop_features:
+    - id
+    - delayTime
+    - isnanDelayTime
+    - planArrival
+    - hour
+    - ampm
+    - delayTime_10
+    - delayTime_11
+    - delayTime_12
+    - delayTime_ahead_10
+    - delayTime_2ahead_9
+    - delayTime_3ahead_8
+    - delayTime_4ahead_7
+    - dayofWeek
+    - isWeekDay
+    - is_firstTrain
+    - is_lastTrain
+  label_encode: []
+  #  - date
+  #  - lineName
+  #  - directionCode
+  #  - trainNo
+  #  - stopStation
+  #  - planArrival
+  #  - dayofWeek
+  only_continued: False
+  only_not_continued: True
+
+  
+
+train_param: 
+  model: CatBoost_Model
+  model_param: 
+    loss_function: MAE
+    iterations: 2000
+    learning_rate: 0.1
+    max_depth: 5
+    reg_lambda: 10
+    colsample_bylevel: 0.8
+
+  
+

@@ -3,6 +3,7 @@ import os
 import os.path as osp
 
 from Models.models import *
+from Models.Tabnet import Tabnet_Model
 from sklearn.metrics import mean_absolute_error
 from utils import seed_everything
 

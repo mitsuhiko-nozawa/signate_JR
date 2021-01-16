@@ -1,0 +1,130 @@
+continued cv: 1.1218452522715627
+(そのまま)
+seed 0, cv : 1.0139354204219
+final cv : 1.0139354204219
+
+
+_10trainなし
+final cv : 0.9989743902089305
+
+_9, _10
+final cv : 1.0101042019091773
+
+_11隣接trainNoなし
+final cv : 0.9956659856904835
+
+_11隣接trainNo1あり
+final cv : 1.0085691462806121
+
+_10_11_12
+final cv : 1.0116679051832076
+
+_12
+final cv : 1.0037138208854337
+_11_12
+final cv : 1.0082617908102474
+_10_11
+final cv : 1.0340251632849413
+_10_12
+final cv : 1.0138869292176746
+
+_11 ahead1234
+final cv : 1.0127801140648636
+
+_11 ahead 4
+final cv : 1.024434858530828
+
+_11 ahead 1
+final cv : 1.0099530685361027
+
+best
+final cv : 0.9806880079971975
+
+0.7
+final cv : 0.9695271911094331
+0.8
+0.974369416192372
+
+
+####################################################################
+exp_param: 
+  WORK_DIR: None # */exp_000
+  ROOT: None # */src
+  cv: sameTimeZone_8_cv
+  nfolds: 5
+  seeds: [0]
+  exp_name: exp_026
+  time_zone: [8]
+  features: 
+    - sameTimeZone_8_cv
+    - id
+    - date
+    - lineName
+    - directionCode
+    - trainNo
+    - stopStation
+    - planArrival
+    - delayTime
+    - continuedDelayTime_8
+    #- date_TrainNo_count
+    - dateTransformed
+    - hour_1_targetMean1
+    #- hour_1_targetMean2
+    - hour_1_targetMean3
+    #- hour_1_targetMean4
+    #- prod_feature
+    #- minute_10_targetMean
+    #- zinshin
+    - stationDetail
+    - continuedFeatures_8
+  y: delayTime
+
+  prepro_flag: True
+  train_flag: True
+  pred_flag: True
+  log_flag: True
+  gcs_flag: False
+
+  only_continued: True
+  only_not_continued: False
+
+
+prepro_param:
+  input_dir: input/
+  output_dir: my_features/
+  drop_features:
+    - id
+    - delayTime
+    - isnanDelayTime
+    - planArrival
+    - hour
+    - ampm
+    - delayTime_ahead_9
+    - delayTime_2ahead_8
+    - delayTime_3ahead_7
+    #- is_firstTrain
+    #- is_lastTrain
+  label_encode: []
+  #  - date
+  #  - lineName
+  #  - directionCode
+  #  - trainNo
+  #  - stopStation
+  #  - planArrival
+  #  - dayofWeek
+  only_continued: True
+  only_not_continued: True
+
+  
+
+train_param: 
+  model: CatBoost_Model
+  model_param: 
+    loss_function: MAE
+    iterations: 2000
+    learning_rate: 0.1
+    max_depth: 5
+    reg_lambda: 10
+
+  
+

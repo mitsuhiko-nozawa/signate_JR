@@ -1,0 +1,7 @@
+pred cv: 0.8604505211367973
+final cv : 0.8228855503506801
+
+delay10nasi, aheadなし
+final cv : 0.8016864405428527
++lambda5
+final cv : 0.7910720532251311

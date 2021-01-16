@@ -34,6 +34,8 @@ class Logging():
         self.flag = param["exp_param"]["log_flag"]
         self.exp_name = param["exp_param"]["exp_name"]
         self.time_zone = param["exp_param"]["time_zone"]
+        self.only_continued = param["exp_param"]["only_continued"]
+        self.only_not_continued = param["exp_param"]["only_not_continued"]
 
     def __call__(self):
         print("Logging")
@@ -62,6 +64,9 @@ class Logging():
         train_y = pd.read_csv(osp.join(self.WORK_DIR, "train", "train.csv"))[:1488885]
         if len(self.time_zone) != 0:
             train_y = train_y[train_y["hour"].isin(self.time_zone)]
+        if self.only_continued: 
+            train_y = train_y[train_y["isnanDelayTime"] == 0]
+        
         for seed in self.seeds:
             cv_feat = f"{self.cv}_{seed}"
             mask = train_y[cv_feat] != -1
@@ -69,9 +74,13 @@ class Logging():
             for fold in range(self.nfolds):
                 val_preds = pd.read_csv(osp.join(self.val_pred_path, f"preds_{seed}_{fold}.csv"))
                 train_y["pred"][train_y[cv_feat] == fold] = val_preds["pred"].values
-                
-            train_y[["pred"]].to_csv(osp.join(self.val_pred_path, f"oof_preds_{seed}.csv"), index=False)            
-            cv_score = mean_absolute_error(train_y[mask][self.y.replace("testMix_", "")], train_y[mask]["pred"])
+
+            train_y[["pred"]].to_csv(osp.join(self.val_pred_path, f"oof_preds_{seed}.csv"), index=False)  
+            if self.only_not_continued:
+                mask2 = train_y["isnanDelayTime"] == 1 
+                cv_score = mean_absolute_error(train_y[mask][mask2][self.y.replace("testMix_", "")], train_y[mask][mask2]["pred"])
+            else:
+                cv_score = mean_absolute_error(train_y[mask][self.y.replace("testMix_", "")], train_y[mask]["pred"])
             cv_scores.append(cv_score)
             print(f"seed {seed}, cv : {cv_score}")
             preds.append(train_y["pred"].values.copy()) # copy!!!!!
@@ -79,7 +88,10 @@ class Logging():
         preds = pd.DataFrame(preds, columns=["pred"])
         preds.to_csv(osp.join(self.val_pred_path, "oof_preds.csv"), index=False)
         try:
-            cv_score = mean_absolute_error(train_y[mask][self.y.replace("testMix_", "")], preds["pred"])
+            if self.only_not_continued:
+                cv_score = mean_absolute_error(train_y[mask][mask2][self.y.replace("testMix_", "")], preds[mask2]["pred"])
+            else:
+                cv_score = mean_absolute_error(train_y[mask][self.y.replace("testMix_", "")], preds["pred"])
         except:
             cv_score = np.mean(cv_scores)
             print("mean cv")
