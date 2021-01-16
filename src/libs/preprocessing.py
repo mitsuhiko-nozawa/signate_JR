@@ -25,6 +25,8 @@ class Preprocessing():
         self.y = param["y"]
         self.flag = param["prepro_flag"]
         self.time_zone = param["time_zone"]
+        self.only_continued = param["only_continued"]
+        self.only_not_continued = param["only_not_continued"]
         
         self.ROOT = param["ROOT"] # */src
         self.WORK_DIR = param["WORK_DIR"]
@@ -49,6 +51,12 @@ class Preprocessing():
                 test_df = test_df[test_df["hour"].isin(self.time_zone)]
             train_df.to_csv(osp.join(self.WORK_DIR, "train", "train.csv"), index=False)
             test_df.to_csv(osp.join(self.WORK_DIR, "test", "test.csv"), index=False)
+            if self.only_continued:
+                train_df = train_df[train_df["isnanDelayTime"] == 0]
+                #test_df = test_df[test_df["isnanDelayTime"] == 0]
+            #if self.only_not_continued:
+            #    train_df = train_df[train_df["isnanDelayTime"] == 1]
+            #    test_df = test_df[test_df["isnanDelayTime"] == 1]
             
             print("label encode")
             for feat in self.label_encode:

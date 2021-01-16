@@ -1,0 +1,2 @@
+hour 19, continued cv: 0.6252232078221673, continued pred cv: 0.7948947784572838
+final cv : 0.7577248937412366

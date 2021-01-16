@@ -1,0 +1,52 @@
+prior best
+continued pred cv: 0.6206327049273397
+
+all
+final cv : 0.6189749313906006
+
+only delayTime_10
+final cv : 0.6117430464298349
+
+only delayTime_11
+final cv : 0.6159775877711448
+
+only delayTime_12
+final cv : 0.6144284333641882
+
+only delayTime_10, 11
+final cv : 0.6204711848904272
+
+only delayTime_10, 12
+final cv : 0.6133848302679019
+
+only delayTime_11, 12
+final cv : 0.6185243021885756
+
+only delayTime_10, ahead
+final cv : 0.6094014288162484
+
+only delayTime_10, 2ahead
+final cv : 0.6203369997099027
+
+only delayTime_10, 3ahead
+final cv : 0.611701058155751
+
+only delayTime_10, 4ahead
+final cv : 0.6118323070192718
+
+only delayTime_10, ahead, add mean2
+final cv : 0.6062950104012349
+
+only delayTime_10, ahead, add mean3, 4
+final cv : 0.6057291814594675
+
+only delayTime_10, ahead, add mean4
+final cv : 0.599992540902479
+
+only delayTime_10, ahead, add mean4, trainNO_count, drop isWeekDay
+final cv : final cv : 0.5918220275541167
+only delayTime_10, ahead, add mean4, trainNO_count, drop dayofWeek, isWeekDay
+
+final cv : 0.5897841596340365
+
+
