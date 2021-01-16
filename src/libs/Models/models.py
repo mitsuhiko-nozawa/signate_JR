@@ -47,6 +47,7 @@ class CatBoost_Model(BaseModel):
             eval_set=valid_data, 
             early_stopping_rounds=100, 
             use_best_model=True,
+            verbose=200,
         )
 
     def predict(self, X):

@@ -3,6 +3,7 @@ import os
 import os.path as osp
 
 from Models.models import *
+from Models.Tabnet import Tabnet_Model
 
 class Predicting():
     def __init__(self, param):

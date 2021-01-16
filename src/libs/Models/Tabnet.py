@@ -27,16 +27,18 @@ class Tabnet_Model(BaseModel):
         valid_X.fillna(-999, inplace=True)
         train_X = train_X.astype(float)
         valid_X = valid_X.astype(float)
+        device = torch.device("cuda:7") if torch.cuda.is_available() else torch.device("cpu")
         self.model = TabNetRegressor(**self.model_param["params"])
+        self.model.device = device
         self.model.fit(
             X_train=train_X.values,
             y_train=train_y.values,
             eval_set=[(valid_X.values, valid_y.values)],
             eval_name = ["val"],
             eval_metric = ["mae"],
-            max_epochs=200,
-            patience=20, 
-            batch_size=128, 
+            max_epochs=1,
+            patience=26, 
+            batch_size=512, 
             virtual_batch_size=32,
             num_workers=1, 
             drop_last=False,
@@ -53,6 +55,6 @@ class Tabnet_Model(BaseModel):
         self.model.save_model(path)
 
     def read_weight(self, fname):
-        self.model = TabNetRegressor
-        fname = fname.replace(".pkl", "")
+        self.model = TabNetRegressor()
+        fname = fname.replace(".pkl", ".zip")
         self.model.load_model(fname)

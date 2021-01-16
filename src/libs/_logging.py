@@ -100,13 +100,16 @@ class Logging():
 
         
     def create_feature_importances(self):
-        models = []
-        for seed in self.seeds:
-            for fold in range(5):
-                p = osp.join(self.weight_path, f"{seed}_{fold}.pkl")
-                models.append(pickle.load(open(p, 'rb')))
-        self.feature_importances_fname = osp.join(self.WORK_DIR, "feature_importances.png")
-        self.visualize_importance(models, self.feats, self.feature_importances_fname)
+        try:
+            models = []
+            for seed in self.seeds:
+                for fold in range(5):
+                    p = osp.join(self.weight_path, f"{seed}_{fold}.pkl")
+                    models.append(pickle.load(open(p, 'rb')))
+            self.feature_importances_fname = osp.join(self.WORK_DIR, "feature_importances.png")
+            self.visualize_importance(models, self.feats, self.feature_importances_fname)
+        except:
+            pass
 
     def visualize_importance(self, models, feats, save_fname):
         feature_importance_df = pd.DataFrame()

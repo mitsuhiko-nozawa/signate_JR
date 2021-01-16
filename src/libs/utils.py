@@ -6,6 +6,7 @@ import math
 from contextlib import contextmanager
 import random
 import numpy as np
+import torch
 
 @contextmanager
 def trace(title):
@@ -31,3 +32,10 @@ def seed_everything(seed=42):
     random.seed(seed)
     os.environ['PYTHONHASHSEED'] = str(seed)
     np.random.seed(seed)
+    if torch.cuda.is_available(): 
+        torch.manual_seed(0)
+        os.environ["CUDA_LAUNCH_BLOCKING"] = "1"
+        torch.cuda.manual_seed(0)
+        torch.cuda.manual_seed_all(0)
+        torch.backends.cudnn.deterministic = True
+        torch.backends.cudnn.benchmark = True
